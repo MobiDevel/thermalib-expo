@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { ThermalibExpoViewProps } from './ThermalibExpo.types';
+import { ThermalibExpoViewProps } from "./ThermalibExpo.types";
 
 export default function ThermalibExpoView(props: ThermalibExpoViewProps) {
   return (

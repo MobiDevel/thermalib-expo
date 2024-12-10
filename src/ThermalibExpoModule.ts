@@ -1,6 +1,6 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireNativeModule } from "expo";
 
-import { ThermalibExpoModuleEvents } from './ThermalibExpo.types';
+import { ThermalibExpoModuleEvents } from "./ThermalibExpo.types";
 
 declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents> {
   PI: number;
@@ -9,4 +9,4 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
 }
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<ThermalibExpoModule>('ThermalibExpo');
+export default requireNativeModule<ThermalibExpoModule>("ThermalibExpo");
