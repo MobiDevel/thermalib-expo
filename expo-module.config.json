@@ -1,0 +1,17 @@
+{
+  "platforms": [
+    "apple",
+    "android",
+    "web"
+  ],
+  "apple": {
+    "modules": [
+      "ThermalibExpoModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "expo.modules.thermalibexpo.ThermalibExpoModule"
+    ]
+  }
+}

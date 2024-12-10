@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "thermalib-expo": ["../src/index"],
+      "thermalib-expo/*": ["../src/*"]
+    }
+  }
+}
