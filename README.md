@@ -23,13 +23,27 @@ npm install thermalib-expo
 
 ### Configure for Android
 
-
-
-
 ### Configure for iOS
 
 Run `npx pod-install` after installing the npm package.
 
+### Running this project
+
+Build the library
+
+```bash
+npm run prepare
+npm run prepublishOnly
+```
+
+Run the test project
+
+```bash
+cd example
+npm run android # or ios
+
+```
+
 # Contributing
 
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
+Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).

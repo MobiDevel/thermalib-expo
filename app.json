@@ -1,0 +1,8 @@
+{
+  "android": {
+    "package": "com.thagstrom.thermalibexpo"
+  },
+  "ios": {
+    "bundleIdentifier": "com.thagstrom.thermalibexpo"
+  }
+}
