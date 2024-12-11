@@ -1,17 +1,15 @@
 {
-  "platforms": [
-    "apple",
-    "android",
-    "web"
-  ],
+  "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": [
-      "ThermalibExpoModule"
-    ]
+    "modules": ["ThermalibExpoModule"]
   },
   "android": {
-    "modules": [
-      "expo.modules.thermalibexpo.ThermalibExpoModule"
-    ]
+    "gradleAarProjects": [
+      {
+        "name": "thermalib-aar",
+        "aarFilePath": "android/libs/thermalib.aar"
+      }
+    ],
+    "modules": ["expo.modules.thermalibexpo.ThermalibExpoModule"]
   }
 }

@@ -34,6 +34,7 @@ Build the library
 ```bash
 npm run prepare
 npm run prepublishOnly
+npx pod-install
 ```
 
 Run the test project
