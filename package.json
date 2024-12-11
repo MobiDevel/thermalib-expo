@@ -33,8 +33,7 @@
   "author": "Thomas Hagström <thomas.hagstrom@chas.se> (https://github.com/thomashagstrom)",
   "license": "MIT",
   "homepage": "https://github.com/thomashagstrom/thermalib-expo#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/react": "~18.3.12",
     "expo-module-scripts": "^4.0.2",
@@ -45,5 +44,8 @@
     "expo": "*",
     "react": "*",
     "react-native": "*"
+  },
+  "jest": {
+    "preset": "expo-module-scripts/ios"
   }
 }
