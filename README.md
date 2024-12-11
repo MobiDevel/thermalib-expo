@@ -34,13 +34,15 @@ Build the library
 ```bash
 npm run prepare
 npm run prepublishOnly
-npx pod-install
+npm run pods
 ```
 
 Run the test project
 
 ```bash
 cd example
+npm run prebuild
+npm run pods
 npm run android # or ios
 
 ```

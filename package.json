@@ -15,7 +15,8 @@
     "open:ios": "xed example/ios",
     "open:android": "open -a \"Android Studio\" example/android",
     "android": "expo run:android",
-    "ios": "expo run:ios"
+    "ios": "expo run:ios",
+    "pods": "npx pod-install"
   },
   "keywords": [
     "react-native",
