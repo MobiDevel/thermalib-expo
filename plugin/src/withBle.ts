@@ -4,6 +4,7 @@ import {
   WarningAggregator,
 } from "expo/config-plugins";
 import { withBluetoothPermissions } from "./withBluetoothPermissions";
+import { withBLEAndroidManifest } from "./withBleAndroidManifest";
 
 const withBle: ConfigPlugin<{}> = (config, props = {}) => {
   const _props = props || {};
@@ -17,12 +18,17 @@ const withBle: ConfigPlugin<{}> = (config, props = {}) => {
   }
   // iOS
   config = withBluetoothPermissions(config, _props);
+
   // Android
   config = AndroidConfig.Permissions.withPermissions(config, [
     "android.permission.BLUETOOTH",
     "android.permission.BLUETOOTH_ADMIN",
     "android.permission.BLUETOOTH_CONNECT", // since Android SDK 31
   ]);
+  config = withBLEAndroidManifest(config, {
+    isBackgroundEnabled: true,
+    neverForLocation: false,
+  });
 
   return config;
 };
