@@ -24,9 +24,10 @@ export default function App() {
             }}
           />
           <Button
-            title="Check Bluetooth"
-            onPress={async () => {
-              await ThermalibExpo.checkBluetooth();
+            title="Get devices"
+            onPress={() => {
+              const devs = ThermalibExpo.getDevices();
+              console.log("devices", devs);
             }}
           />
         </Group>

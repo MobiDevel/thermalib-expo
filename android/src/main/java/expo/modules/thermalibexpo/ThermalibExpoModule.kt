@@ -17,12 +17,7 @@ class ThermalibExpoModule : Module() {
   lateinit var context: Context
 
   // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
-  //var devices = arrayOf<Device>()
-
-  // private fun refreshDeviceList() {
-  //   // ThermaLib: illustrates the deviceList attribute
-  //   devices = TL.deviceList.toTypedArray()
-  // } 
+  var devices = arrayOf<Device>()
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -58,33 +53,46 @@ class ThermalibExpoModule : Module() {
     Function("checkBluetooth") {
       return@Function bluetooth()
     }
+
+
+    Function("getDevices") {
+      refreshDeviceList()
+      return@Function devices;
+    }
     
     OnCreate {     
       appContext.reactContext?.let {
         TL = ThermaLib.instance(it)
         context = it
       }
+      bluetooth()
+      refreshDeviceList()
     }
   }
 
+  private fun refreshDeviceList() {
+    // ThermaLib: illustrates the deviceList attribute
+    devices = TL.deviceList.toTypedArray()
+  }
+
   private fun bluetooth() {
-    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-    if( bluetoothManager.adapter == null ) {
-        Toast.makeText(context, "No bluetooth adapter - sorry", Toast.LENGTH_LONG).show()
-        // finish()
-    }
-    else if( !bluetoothManager.adapter.isEnabled ) {
-        AlertDialog.Builder(context).apply {
-            setMessage("This app uses Bluetooth. Turn on now?")
-            setPositiveButton(android.R.string.yes) {_, _ ->
-                bluetoothManager.adapter.enable()
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if( bluetoothManager.adapter == null ) {
+            Toast.makeText(context, "No bluetooth adapter - sorry", Toast.LENGTH_LONG).show()
+            // finish()
+        }
+        else if( !bluetoothManager.adapter.isEnabled ) {
+            AlertDialog.Builder(context).apply {
+                setMessage("This app uses Bluetooth. Turn on now?")
+                setPositiveButton(android.R.string.yes) {_, _ ->
+                    bluetoothManager.adapter.enable()
+                }
+                setNegativeButton(android.R.string.no) {_, _ ->
+                    Toast.makeText(context, "Bye then..", Toast.LENGTH_LONG).show()
+                    // finish()
+                }
+                create().show()
             }
-            setNegativeButton(android.R.string.no) {_, _ ->
-                Toast.makeText(context, "Bye then..", Toast.LENGTH_LONG).show()
-                // finish()
-            }
-            create().show()
         }
     }
-}
 }

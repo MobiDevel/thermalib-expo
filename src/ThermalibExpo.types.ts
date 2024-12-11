@@ -49,3 +49,9 @@ export type ThermBlueToothErrorCode = {
   DISABLED: 2;
   LE_DISABLED: 3;
 };
+
+export type ThermDevice = {
+  id: string;
+  name?: string;
+  UUID?: string;
+};
