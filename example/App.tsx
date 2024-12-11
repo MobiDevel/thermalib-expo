@@ -24,6 +24,18 @@ export default function App() {
             }}
           />
           <Button
+            title="Check bluetooth"
+            onPress={() => {
+              ThermalibExpo.checkBluetooth();
+            }}
+          />
+          <Button
+            title="Start scanning"
+            onPress={() => {
+              ThermalibExpo.startScanning();
+            }}
+          />
+          <Button
             title="Get devices"
             onPress={() => {
               const devs = ThermalibExpo.getDevices();

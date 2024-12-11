@@ -8,6 +8,7 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
   setValueAsync(value: string): Promise<void>;
   checkBluetooth(): void;
   getDevices(): ThermDevice[];
+  startScanning(): void;
 }
 
 // This call loads the native module object from the JSI.
