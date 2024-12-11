@@ -3,14 +3,18 @@ package expo.modules.thermalibexpo
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
+import android.bluetooth.BluetoothManager
 import uk.co.etiltd.thermalib.ThermaLib
 import uk.co.etiltd.thermalib.Device
 import uk.co.etiltd.thermalib.Sensor
 import android.content.Context
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 
 lateinit var TL : ThermaLib
 
 class ThermalibExpoModule : Module() {    
+  lateinit var context: Context
 
   // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
   //var devices = arrayOf<Device>()
@@ -51,15 +55,36 @@ class ThermalibExpoModule : Module() {
       ))
     }
 
-    AsyncFunction("checkBluetooth") {
-      return@AsyncFunction true
+    Function("checkBluetooth") {
+      return@Function bluetooth()
     }
     
-    OnCreate {
+    OnCreate {     
       appContext.reactContext?.let {
         TL = ThermaLib.instance(it)
+        context = it
       }
     }
   }
 
+  private fun bluetooth() {
+    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    if( bluetoothManager.adapter == null ) {
+        Toast.makeText(context, "No bluetooth adapter - sorry", Toast.LENGTH_LONG).show()
+        // finish()
+    }
+    else if( !bluetoothManager.adapter.isEnabled ) {
+        AlertDialog.Builder(context).apply {
+            setMessage("This app uses Bluetooth. Turn on now?")
+            setPositiveButton(android.R.string.yes) {_, _ ->
+                bluetoothManager.adapter.enable()
+            }
+            setNegativeButton(android.R.string.no) {_, _ ->
+                Toast.makeText(context, "Bye then..", Toast.LENGTH_LONG).show()
+                // finish()
+            }
+            create().show()
+        }
+    }
+}
 }

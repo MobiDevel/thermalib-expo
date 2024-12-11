@@ -5,7 +5,6 @@ import { useState } from "react";
 
 export default function App() {
   const onChangePayload = useEvent(ThermalibExpo, "onChange");
-  const [hasBt, setHasBt] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -27,14 +26,12 @@ export default function App() {
           <Button
             title="Check Bluetooth"
             onPress={async () => {
-              const bt = await ThermalibExpo.checkBluetooth();
-              setHasBt(bt);
+              await ThermalibExpo.checkBluetooth();
             }}
           />
         </Group>
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
-          <Text>BT {hasBt === true ? "YES" : "NO"}</Text>
         </Group>
       </ScrollView>
     </SafeAreaView>
