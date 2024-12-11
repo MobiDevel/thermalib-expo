@@ -33,7 +33,7 @@ Build the library
 
 ```bash
 npm run prepare
-npm run prepublishOnly
+npm run prepub
 npm run pods
 ```
 

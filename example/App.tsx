@@ -1,9 +1,11 @@
 import { useEvent } from "expo";
-import ThermalibExpo, { ThermalibExpoView } from "thermalib-expo";
+import ThermalibExpo from "thermalib-expo";
 import { Button, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
 
 export default function App() {
   const onChangePayload = useEvent(ThermalibExpo, "onChange");
+  const [hasBt, setHasBt] = useState(false);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -22,9 +24,17 @@ export default function App() {
               await ThermalibExpo.setValueAsync("Hello from JS!");
             }}
           />
+          <Button
+            title="Check Bluetooth"
+            onPress={async () => {
+              const bt = await ThermalibExpo.checkBluetooth();
+              setHasBt(bt);
+            }}
+          />
         </Group>
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
+          <Text>BT {hasBt === true ? "YES" : "NO"}</Text>
         </Group>
       </ScrollView>
     </SafeAreaView>
@@ -54,6 +64,7 @@ const styles = {
     backgroundColor: "#fff",
     borderRadius: 10,
     padding: 20,
+    gap: 10,
   },
   container: {
     flex: 1,

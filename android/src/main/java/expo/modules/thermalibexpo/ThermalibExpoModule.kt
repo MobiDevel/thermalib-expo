@@ -3,8 +3,23 @@ package expo.modules.thermalibexpo
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.net.URL
+import uk.co.etiltd.thermalib.ThermaLib
+import uk.co.etiltd.thermalib.Device
+import uk.co.etiltd.thermalib.Sensor
+import android.content.Context
 
-class ThermalibExpoModule : Module() {
+lateinit var TL : ThermaLib
+
+class ThermalibExpoModule : Module() {    
+
+  // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
+  //var devices = arrayOf<Device>()
+
+  // private fun refreshDeviceList() {
+  //   // ThermaLib: illustrates the deviceList attribute
+  //   devices = TL.deviceList.toTypedArray()
+  // } 
+
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
   // See https://docs.expo.dev/modules/module-api for more details about available components.
@@ -35,5 +50,16 @@ class ThermalibExpoModule : Module() {
         "value" to value
       ))
     }
+
+    AsyncFunction("checkBluetooth") {
+      return@AsyncFunction true
+    }
+    
+    OnCreate {
+      appContext.reactContext?.let {
+        TL = ThermaLib.instance(it)
+      }
+    }
   }
+
 }
