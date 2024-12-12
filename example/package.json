@@ -3,18 +3,20 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "start": "npm run prebuild && expo start",
+    "android": "npm run prebuild && expo run:android",
+    "ios": "npm run prebuild && expo run:ios",
     "web": "expo start --web",
     "prebuild": "npx expo prebuild",
     "prebuild:clean": "npx expo prebuild --clean",
-    "pods": "npx pod-install"
+    "pods": "npx pod-install",
+    "build": "rm -rf android && rm -rf ios && npm run prebuild:clean"
   },
   "dependencies": {
     "expo": "~52.0.17",
     "react": "18.3.1",
-    "react-native": "0.76.3"
+    "react-native": "0.76.3",
+    "thermalib-expo": "../"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

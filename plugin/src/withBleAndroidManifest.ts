@@ -191,6 +191,5 @@ export function addConnectPermissionToManifest(
       },
     });
   }
-  console.log("Android manifest", androidManifest);
   return androidManifest;
 }
