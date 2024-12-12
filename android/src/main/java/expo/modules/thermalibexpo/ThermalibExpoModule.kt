@@ -10,7 +10,6 @@ import uk.co.etiltd.thermalib.Sensor
 import android.content.Context
 import android.util.Log
 
-lateinit var TL : ThermaLib
 
 class ThermalibExpoModule : Module() {   
   private val TAG = "ThermalibExpo";
@@ -22,7 +21,6 @@ class ThermalibExpoModule : Module() {
 
   // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
   var devices = arrayOf<Device>()
-
 
   // Each module class must implement the definition function. The definition consists of components
   // that describes the module's functionality and behavior.
@@ -40,11 +38,6 @@ class ThermalibExpoModule : Module() {
 
     // Defines event names that the module can send to JavaScript.
     Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
-    }
 
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
@@ -64,31 +57,35 @@ class ThermalibExpoModule : Module() {
       return@AsyncFunction devices;
     }
     
-    OnCreate {     
-      appContext.reactContext?.let {
-        TL = ThermaLib.instance(it)
-        context = it
+    OnCreate {        
+      sendEvent("onChange", mapOf(
+        "value" to "Register callbacks"
+      ))
+      Log.d(TAG, "Register callbacks");
 
-        //
-        // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
-        // it has been called. See the documentation for ThermaLib.UnsupportedCallHandling
-        //
-        TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
-       
-        //
-        // ThermaLib: Register callbacks. A more sophisticated implementation may register and deregister
-        // callbacks dynamically, according to the activity state (started/stopped, paused/resumed..)
-        // to avoid callbacks being invoked at inappropriate times.
-        //
-        // TL.registerCallbacks(thermaLibCallbacks, "InstrumentList");  
-      } 
+      // ThermaLib: Register callbacks. A more sophisticated implementation may register and deregister
+      // callbacks dynamically, according to the activity state (started/stopped, paused/resumed..)
+      // to avoid callbacks being invoked at inappropriate times. 
+      TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo");     
     }
   }
 
   private fun startScanning() {
+    sendEvent("onChange", mapOf(
+      "value" to "Starting to scan"
+    ))
+
+    Log.d(TAG, "Start scanning");
+
+    // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
+    // it has been called. See the documentation for ThermaLib.UnsupportedCallHandling
+    //
+    TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
+
     // ThermaLib: start scan for Bluetooth LE devices, with a 5-second timeout.
     // Completion will be dispatched via tlCallbacks
-    TL.startScanForDevices(ThermaLib.Transport.BLUETOOTH_LE, 5);
+    TL.stopScanForDevices();
+    TL.startScanForDevices(ThermaLib.Transport.BLUETOOTH_LE, 15);
   }
 
   private fun refreshDeviceList() {
@@ -114,7 +111,13 @@ class ThermalibExpoModule : Module() {
             Log.d(TAG, "${numDevices} found in scan")
             refreshDeviceList()
         } else {
-            Log.e(TAG, "Scan failed: ${scanResult.desc}", IllegalStateException("Scan requested when already scanning"))
+          sendEvent("onChange", 
+          mapOf(
+          "value" to "Scan failed: ${scanResult.desc}"
+          ))
+
+            Log.e(TAG, "Scan failed: ${scanResult.desc}", 
+            IllegalStateException("Scan requested when already scanning"))
         }
     }
 
