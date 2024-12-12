@@ -1,44 +1,46 @@
 import { useEvent } from "expo";
-import ThermalibExpo from "thermalib-expo";
+import { requestBluetoothPermission, thermalib } from "thermalib-expo";
 import { Button, SafeAreaView, ScrollView, Text, View } from "react-native";
-import { useState } from "react";
 
 export default function App() {
-  const onChangePayload = useEvent(ThermalibExpo, "onChange");
+  const onChangePayload = useEvent(thermalib, "onChange");
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Module API Example</Text>
         <Group name="Constants">
-          <Text>{ThermalibExpo.PI}</Text>
+          <Text>{thermalib.PI}</Text>
         </Group>
         <Group name="Functions">
-          <Text>{ThermalibExpo.hello()}</Text>
+          <Text>{thermalib.hello()}</Text>
         </Group>
         <Group name="Async functions">
           <Button
             title="Set value"
             onPress={async () => {
-              await ThermalibExpo.setValueAsync("Hello from JS!");
+              await thermalib.setValueAsync("Hello from JS!");
             }}
           />
           <Button
             title="Check bluetooth"
-            onPress={() => {
-              ThermalibExpo.checkBluetooth();
+            onPress={async () => {
+              await requestBluetoothPermission();
+              thermalib.checkBluetooth();
             }}
           />
           <Button
             title="Start scanning"
-            onPress={() => {
-              ThermalibExpo.startScanning();
+            onPress={async () => {
+              await requestBluetoothPermission();
+              thermalib.startScanning();
             }}
           />
           <Button
             title="Get devices"
-            onPress={() => {
-              const devs = ThermalibExpo.getDevices();
+            onPress={async () => {
+              await requestBluetoothPermission();
+              const devs = thermalib.getDevices();
               console.log("devices", devs);
             }}
           />
