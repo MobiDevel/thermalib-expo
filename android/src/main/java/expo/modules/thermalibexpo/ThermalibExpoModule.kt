@@ -8,8 +8,6 @@ import uk.co.etiltd.thermalib.ThermaLib
 import uk.co.etiltd.thermalib.Device
 import uk.co.etiltd.thermalib.Sensor
 import android.content.Context
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import android.util.Log
 
 lateinit var TL : ThermaLib
@@ -57,25 +55,19 @@ class ThermalibExpoModule : Module() {
       ))
     }
 
-    Function("checkBluetooth") {
-      return@Function bluetooth()
+    AsyncFunction("startScanning") {
+      return@AsyncFunction startScanning()
     }
 
-    Function("startScanning") {
-      return@Function startScanning()
-    }
-
-    Function("getDevices") {
+    AsyncFunction("getDevices") {
       refreshDeviceList()
-      return@Function devices;
+      return@AsyncFunction devices;
     }
     
     OnCreate {     
       appContext.reactContext?.let {
         TL = ThermaLib.instance(it)
         context = it
-
-        bluetooth()
 
         //
         // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
@@ -103,27 +95,6 @@ class ThermalibExpoModule : Module() {
     // ThermaLib: illustrates the deviceList attribute
     devices = TL.deviceList.toTypedArray()
   }
-
-  private fun bluetooth() {
-    val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-    if( bluetoothManager.adapter == null ) {
-        Toast.makeText(context, "No bluetooth adapter - sorry", Toast.LENGTH_LONG).show()
-        // finish()
-    }
-    else if( !bluetoothManager.adapter.isEnabled ) {
-        AlertDialog.Builder(context).apply {
-            setMessage("This app uses Bluetooth. Turn on now?")
-            setPositiveButton(android.R.string.yes) {_, _ ->
-                bluetoothManager.adapter.enable()
-            }
-            setNegativeButton(android.R.string.no) {_, _ ->
-                Toast.makeText(context, "Bye then..", Toast.LENGTH_LONG).show()
-                // finish()
-            }
-            create().show()
-        }
-    }
-  }  
 
   /**
    * Illustrates: Handling of scan-time ThermaLib callbacks

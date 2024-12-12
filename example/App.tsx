@@ -10,10 +10,10 @@ export default function App() {
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Module API Example</Text>
         <Group name="Constants">
-          <Text>{thermalib.PI}</Text>
+          <Text>None</Text>
         </Group>
         <Group name="Functions">
-          <Text>{thermalib.hello()}</Text>
+          <Text>None</Text>
         </Group>
         <Group name="Async functions">
           <Button
@@ -23,24 +23,17 @@ export default function App() {
             }}
           />
           <Button
-            title="Check bluetooth"
-            onPress={async () => {
-              await requestBluetoothPermission();
-              thermalib.checkBluetooth();
-            }}
-          />
-          <Button
             title="Start scanning"
             onPress={async () => {
               await requestBluetoothPermission();
-              thermalib.startScanning();
+              await thermalib.startScanning();
             }}
           />
           <Button
             title="Get devices"
             onPress={async () => {
               await requestBluetoothPermission();
-              const devs = thermalib.getDevices();
+              const devs = await thermalib.getDevices();
               console.log("devices", devs);
             }}
           />
