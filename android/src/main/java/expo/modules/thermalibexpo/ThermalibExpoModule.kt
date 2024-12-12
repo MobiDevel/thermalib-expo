@@ -107,6 +107,10 @@ class ThermalibExpoModule : Module() {
             errorMsg: String?
     ) {
         if (scanResult == ThermaLib.ScanResult.SUCCESS) {
+            sendEvent("onChange", mapOf(
+              "value" to "${numDevices} found in scan"
+            ))
+
             Log.d(TAG, "${numDevices} found in scan")
             refreshDeviceList()
         } else {
@@ -116,11 +120,17 @@ class ThermalibExpoModule : Module() {
 
     override fun onNewDevice(device: Device, timestamp: Long) {
         Log.d(TAG, "New device found: ${device.deviceName}");
+        sendEvent("onChange", mapOf(
+          "value" to "New device found: ${device.deviceName}"
+        ))
         refreshDeviceList()
     }
 
     override fun onDeviceConnectionStateChanged(device: Device, newState: Device.ConnectionState?, timestamp: Long) {
         Log.d(TAG, "Device ${device.identifier} changed state -> ${device.connectionState.toString()}")
+        sendEvent("onChange", mapOf(
+          "value" to "Device ${device.identifier} changed state -> ${device.connectionState.toString()}"
+        ))
         // instrument_list.adapter?.notifyDataSetChanged()
     }
 
