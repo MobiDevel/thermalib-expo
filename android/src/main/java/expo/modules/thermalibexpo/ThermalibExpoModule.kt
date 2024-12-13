@@ -16,9 +16,10 @@ import uk.co.etiltd.thermalib.Sensor
 import uk.co.etiltd.thermalib.ThermaLib
 
 val TAG =  "ThermalibExpo"
-lateinit var TL : ThermaLib
 
 class ThermalibExpoModule : Module() {
+  lateinit var TL : ThermaLib
+
   // It's a Bluetooth app, so FINE_LOCATION permission is required. See permissions() below
   private val MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1
 
@@ -61,19 +62,18 @@ class ThermalibExpoModule : Module() {
     }
     
     OnCreate {        
-      Log.d(TAG, "Init ThermaLib");
-      TL = ThermaLib.instance(context);
+      // Log.d(TAG, "Init ThermaLib");
+      // TL = ThermaLib.instance(context);
       
-      sendEvent("onChange", mapOf(
-        "value" to "Register callbacks"
-      ))
+      // sendEvent("onChange", mapOf(
+      //   "value" to "Register callbacks"
+      // ))
 
-      Log.d(TAG, "Register callbacks");
-
+      // Log.d(TAG, "Register callbacks");
       // ThermaLib: Register callbacks. A more sophisticated implementation may register and deregister
       // callbacks dynamically, according to the activity state (started/stopped, paused/resumed..)
       // to avoid callbacks being invoked at inappropriate times. 
-      TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo");     
+      // TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo");     
     }
   }
 
@@ -81,6 +81,15 @@ class ThermalibExpoModule : Module() {
   get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
 
   private fun startScanning() {
+    Log.d(TAG, "Init ThermaLib");
+    TL = ThermaLib.instance(context);
+
+    Log.d(TAG, "Register callbacks");
+    sendEvent("onChange", mapOf(
+      "value" to "Register callbacks"
+    ))
+    TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo"); 
+
     sendEvent("onChange", mapOf(
       "value" to "Starting to scan"
     ))
