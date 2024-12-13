@@ -9,12 +9,12 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
         <Text style={styles.header}>Module API Example</Text>
-        <Group name="Constants">
+        {/* <Group name="Constants">
           <Text>None</Text>
         </Group>
         <Group name="Functions">
           <Text>None</Text>
-        </Group>
+        </Group> */}
         <Group name="Async functions">
           <Button
             title="Init thermalib"

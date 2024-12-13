@@ -137,10 +137,10 @@ class ThermalibExpoModule : Module() {
             Log.d(TAG, "${numDevices} found in scan")
             refreshDeviceList()
         } else {
-          sendEvent("onChange", 
-          mapOf(
-          "value" to "Scan failed: ${scanResult.desc}"
-          ))
+            sendEvent("onChange", 
+              mapOf(
+              "value" to "Scan failed: ${scanResult.desc}"
+              ))
 
             Log.e(TAG, "Scan failed: ${scanResult.desc}", 
             IllegalStateException("Scan requested when already scanning"))
