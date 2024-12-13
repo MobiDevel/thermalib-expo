@@ -1,23 +1,26 @@
 package expo.modules.thermalibexpo
 
-import expo.modules.kotlin.modules.Module
-import expo.modules.kotlin.modules.ModuleDefinition
-import java.net.URL
+import android.os.Build
+import android.os.Bundle
 import android.bluetooth.BluetoothManager
-import uk.co.etiltd.thermalib.ThermaLib
-import uk.co.etiltd.thermalib.Device
-import uk.co.etiltd.thermalib.Sensor
 import android.content.Context
 import android.util.Log
+import expo.modules.kotlin.modules.Module
+import expo.modules.kotlin.modules.ModuleDefinition
+import expo.modules.kotlin.Promise
+import expo.modules.kotlin.exception.Exceptions
+import expo.modules.kotlin.exception.UnexpectedException
+import java.net.URL
+import uk.co.etiltd.thermalib.Device
+import uk.co.etiltd.thermalib.Sensor
+import uk.co.etiltd.thermalib.ThermaLib
 
+val TAG =  "ThermalibExpo"
+lateinit var TL : ThermaLib
 
-class ThermalibExpoModule : Module() {   
-  private val TAG = "ThermalibExpo";
-
+class ThermalibExpoModule : Module() {
   // It's a Bluetooth app, so FINE_LOCATION permission is required. See permissions() below
   private val MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1
-
-  lateinit var context: Context
 
   // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
   var devices = arrayOf<Device>()
@@ -29,7 +32,7 @@ class ThermalibExpoModule : Module() {
     // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
     // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
     // The module will be accessible from `requireNativeModule('ThermalibExpo')` in JavaScript.
-    Name("ThermalibExpo")
+    Name(TAG)
 
     // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
     Constants(
@@ -58,9 +61,13 @@ class ThermalibExpoModule : Module() {
     }
     
     OnCreate {        
+      Log.d(TAG, "Init ThermaLib");
+      TL = ThermaLib.instance(context);
+      
       sendEvent("onChange", mapOf(
         "value" to "Register callbacks"
       ))
+
       Log.d(TAG, "Register callbacks");
 
       // ThermaLib: Register callbacks. A more sophisticated implementation may register and deregister
@@ -69,6 +76,9 @@ class ThermalibExpoModule : Module() {
       TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo");     
     }
   }
+
+  private val context: Context
+  get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
 
   private fun startScanning() {
     sendEvent("onChange", mapOf(

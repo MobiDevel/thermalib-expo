@@ -32,6 +32,8 @@ Run `npx pod-install` after installing the npm package.
 Build the library
 
 ```bash
+npm run build # typescript
+# in a separate terminal
 npm run prepare
 npm run prepub
 npm run pods
