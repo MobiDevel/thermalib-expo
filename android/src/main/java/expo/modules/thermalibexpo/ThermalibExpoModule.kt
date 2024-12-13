@@ -45,11 +45,8 @@ class ThermalibExpoModule : Module() {
 
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
+    AsyncFunction("initThermalib") {
+      return@AsyncFunction initThermalib()
     }
 
     AsyncFunction("startScanning") {
@@ -80,15 +77,25 @@ class ThermalibExpoModule : Module() {
   private val context: Context
   get() = appContext.reactContext ?: throw Exceptions.ReactContextLost()
 
-  private fun startScanning() {
+  private fun initThermalib(){
+    sendEvent("onChange", mapOf(
+      "value" to "context ${context}"
+    ))
+
     Log.d(TAG, "Init ThermaLib");
+    sendEvent("onChange", mapOf(
+      "value" to "Init ThermaLib"
+    ))
     TL = ThermaLib.instance(context);
 
     Log.d(TAG, "Register callbacks");
     sendEvent("onChange", mapOf(
-      "value" to "Register callbacks"
+      "value" to "Register callbacks on ${TL}"
     ))
-    TL.registerCallbacks(thermaLibCallbacks, "ThermalibExpo"); 
+    TL.registerCallbacks(thermaLibCallbacks, TAG); 
+  }
+
+  private fun startScanning() {
 
     sendEvent("onChange", mapOf(
       "value" to "Starting to scan"

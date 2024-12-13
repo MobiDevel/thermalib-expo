@@ -17,9 +17,9 @@ export default function App() {
         </Group>
         <Group name="Async functions">
           <Button
-            title="Set value"
+            title="Init thermalib"
             onPress={async () => {
-              await thermalib.setValueAsync("Hello from JS!");
+              await thermalib.initThermalib();
             }}
           />
           <Button
