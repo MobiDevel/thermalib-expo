@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "android:build": "npm run prepub && cd example && npm run android",
+    "android:build": "npm run prepare && npm run prepub && cd example && npm run android",
     "build": "expo-module build",
     "build:watch": "expo-module build --watch",
     "clean": "expo-module clean",
@@ -41,6 +41,7 @@
     "@types/react": "~18.3.1",
     "expo": "^52.0.23",
     "expo-module-scripts": "^4.0.2",
+    "jest": "^29.7.0",
     "react": "18.3.1",
     "react-native": "^0.76.5",
     "typescript": "^5.7.2"
@@ -51,6 +52,6 @@
     "react-native": "*"
   },
   "jest": {
-    "preset": "expo-module-scripts/ios"
+    "preset": "jest-expo"
   }
 }

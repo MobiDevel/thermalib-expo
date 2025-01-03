@@ -5,6 +5,7 @@ import {
 } from "expo/config-plugins";
 import { withBluetoothPermissions } from "./withBluetoothPermissions";
 import { withBLEAndroidManifest } from "./withBleAndroidManifest";
+import withLocalBroadcastManager from "./withLocalBroadcastManager";
 
 const withBle: ConfigPlugin<{}> = (config, props = {}) => {
   const _props = props || {};
@@ -25,6 +26,7 @@ const withBle: ConfigPlugin<{}> = (config, props = {}) => {
     "android.permission.BLUETOOTH_ADMIN",
     "android.permission.BLUETOOTH_CONNECT", // since Android SDK 31
   ]);
+  config = withLocalBroadcastManager(config, _props);
   config = withBLEAndroidManifest(config, {
     isBackgroundEnabled: true,
     neverForLocation: false,

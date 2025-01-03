@@ -4,6 +4,6 @@
     "outDir": "build",
     "rootDir": "src"
   },
-  "include": ["./src"],
-  "exclude": ["**/__mocks__/*", "**/__tests__/*"]
+  "include": ["./src", "src/DummyExpoConfig.ts"],
+  "exclude": ["**/__mocks__/*", "**/__tests__/*", "DummyExpoConfig.ts"]
 }
