@@ -1,6 +1,13 @@
 import { useEvent } from "expo";
 import { requestBluetoothPermission, thermalib } from "thermalib-expo";
-import { Button, SafeAreaView, ScrollView, Text, View } from "react-native";
+import {
+  Button,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
@@ -8,29 +15,22 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        {/* <Group name="Constants">
-          <Text>None</Text>
-        </Group>
-        <Group name="Functions">
-          <Text>None</Text>
-        </Group> */}
+        <Image
+          source={require("./assets/thermalib-1024.png")}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        <Text style={styles.header}>Thermalib Example</Text>
         <Group name="Async functions">
           <Button
-            title="Init thermalib"
-            onPress={async () => {
-              await thermalib.initThermalib();
-            }}
-          />
-          <Button
-            title="Start scanning"
+            title="startScanning"
             onPress={async () => {
               await requestBluetoothPermission();
               await thermalib.startScanning();
             }}
           />
           <Button
-            title="Get devices"
+            title="devices"
             onPress={async () => {
               await requestBluetoothPermission();
               const devs = await thermalib.getDevices();
@@ -59,6 +59,8 @@ const styles = {
   header: {
     fontSize: 30,
     margin: 20,
+    testAlign: "center",
+    alignSelf: "center",
   },
   groupHeader: {
     fontSize: 20,
@@ -74,6 +76,11 @@ const styles = {
   container: {
     flex: 1,
     backgroundColor: "#eee",
+  },
+  logo: {
+    with: "100%",
+    alignSelf: "center",
+    height: 180,
   },
   view: {
     flex: 1,

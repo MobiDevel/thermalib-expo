@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "start": "npm run prebuild && expo start",
+    "start": "expo start --dev-client",
+    "start:prod": "expo start --no-dev",
     "android": "expo run:android",
     "ios": "npm run prebuild && expo run:ios",
     "web": "expo start --web",
@@ -20,8 +21,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native/typescript-config": "^0.76.5",
     "@types/react": "~18.3.1",
-    "typescript": "*"
+    "eslint": "^8.19.0",
+    "typescript": "^5.7.2"
   },
   "private": true,
   "expo": {
