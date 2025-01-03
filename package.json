@@ -5,7 +5,9 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
+    "android:build": "npm run prepub && cd example && npm run android",
     "build": "expo-module build",
+    "build:watch": "expo-module build --watch",
     "clean": "expo-module clean",
     "lint": "expo-module lint",
     "test": "expo-module test",
@@ -39,7 +41,7 @@
   "devDependencies": {
     "@types/react": "~18.3.12",
     "expo-module-scripts": "^4.0.2",
-    "expo": "*",
+    "expo": "^52.0.23",
     "react-native": "*"
   },
   "peerDependencies": {
