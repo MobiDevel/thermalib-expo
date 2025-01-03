@@ -87,7 +87,7 @@ android {
     
     // configurations.all {
     //     resolutionStrategy {
-    //         force("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0") // Force the desired version
+    //         force("com.android.support:localbroadcastmanager:28.0.0")
     //     }
     // }
   }

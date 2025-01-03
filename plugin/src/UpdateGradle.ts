@@ -6,7 +6,22 @@ const localBroadcastX =
   "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0";
 
 const withImplementation = (dependency: string) =>
-  `implementation(\"${dependency}\")`;
+  dependency && dependency.length !== 0
+    ? `implementation("${dependency}")`
+    : "";
+
+const withResolutionStrategy = `configurations.all {
+      resolutionStrategy {
+        preferProjectModules()
+
+        force "${localBroadcast}"
+        forcedModules = ["${localBroadcast}"]
+        
+        dependencySubstitution {
+          substitute module("androidx.localbroadcastmanager:localbroadcastmanager") using module("${localBroadcast}")
+        }
+      }
+    }`;
 
 /**
  * Update the `android/app/build.gradle` as a string.
@@ -26,6 +41,7 @@ export const UpdateGradle = (configModResultsContents: string) => {
 
   // Replace duplicates
   otherDependencies = otherDependencies
+    .replace(withResolutionStrategy, "")
     .replace(withImplementation(localBroadcastX), "")
     .replace(withImplementation(localBroadcast), "");
 
@@ -33,7 +49,7 @@ export const UpdateGradle = (configModResultsContents: string) => {
   // https://stackoverflow.com/questions/74942623/how-can-i-add-to-default-config-in-build-gradle-in-expo-managed-project
   const newContent = `${mainConfig}${facebookDependency}
     ${withImplementation(localBroadcast)}
-    ${withImplementation(localBroadcastX)}${otherDependencies}`;
+    ${withResolutionStrategy}${otherDependencies}`;
 
   return newContent;
 };

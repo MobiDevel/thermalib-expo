@@ -308,7 +308,18 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation("com.android.support:localbroadcastmanager:28.0.0")
-    implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.0.0")
+    configurations.all {
+      resolutionStrategy {
+        preferProjectModules()
+
+        force "com.android.support:localbroadcastmanager:28.0.0"
+        forcedModules = ["com.android.support:localbroadcastmanager:28.0.0"]
+        
+        dependencySubstitution {
+          substitute module("androidx.localbroadcastmanager:localbroadcastmanager") using module("com.android.support:localbroadcastmanager:28.0.0")
+        }
+      }
+    }
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
