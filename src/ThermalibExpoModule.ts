@@ -1,10 +1,10 @@
 import { NativeModule, requireNativeModule } from "expo";
 
-import { ThermalibExpoModuleEvents, ThermDevice } from "./ThermalibExpo.types";
+import { Device, ThermalibExpoModuleEvents } from "./types";
 
 declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents> {
   setValueAsync(value: string): Promise<void>;
-  getDevices(): Promise<ThermDevice[]>;
+  devices(): Device[] | null;
   startScanning(): Promise<void>;
 }
 

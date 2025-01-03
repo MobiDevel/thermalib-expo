@@ -2,7 +2,7 @@
 // and on native platforms to ThermalibExpoModule.ts
 import mod from "./ThermalibExpoModule";
 export { mod as thermalib };
-export * from "./ThermalibExpo.types";
+export * from "./types";
 export * from "./bleManager";
 
 export default mod;
