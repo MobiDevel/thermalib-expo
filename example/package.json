@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "adb:connect": "adb reverse tcp:8081 tcp:5555",
     "start": "expo start --dev-client",
     "start:prod": "expo start --no-dev",
     "android": "expo run:android",

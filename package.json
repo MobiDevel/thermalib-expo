@@ -5,6 +5,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
+    "adb:connect": "adb reverse tcp:8081 tcp:5555",
     "android:build": "npm run prepare && npm run prepub && cd example && npm run android",
     "build": "expo-module build",
     "build:watch": "expo-module build --watch",
