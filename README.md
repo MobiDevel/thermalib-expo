@@ -18,21 +18,22 @@ For bare React Native projects, you must ensure that you have [installed and con
 
 # Usage
 
-This library depends on Bluetooth LE (low energy) and will add the required permissions to your app. For Android, the following permissions are added:
+![](assets/thermalib_example.jpg)
 
-```xml
-  <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-  <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION"/>
-  <uses-permission android:name="android.permission.BLUETOOTH"/>
-  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
-  <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:targetApi="31"/>
-  <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+Screenshot is from the included [example](./example/App.tsx).
+
+# Permissions
+
+When you call upon any function like `startScanning`, it is still imperative that you **request bluetooth permissions** first. The module includes a standard helper to achieve this.
+
+```typescript
+import { requestBluetoothPermission } from "thermalib-expo";
+
+await requestBluetoothPermission();
+
 ```
 
-## Scanning for devices
-
-When you call upon any function like `startScanning`, it is still imperative that you **request bluetooth permissions** first. The module includes a standard helper to achieve this:
+# Scanning for devices
 
 ```typescript
 
@@ -122,8 +123,16 @@ export default function App() {
 
 # Configure for Android
 
-No extra configuration needed.
+This library depends on Bluetooth LE (low energy) and will add the required permissions to your app. For Android, the following permissions are added. Remember to still [**ask for permissions**](#permissions) before calling any BT function.
 
+```xml
+  <uses-permission-sdk-23 android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission-sdk-23 android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+  <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:targetApi="31"/>
+  <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 # Configure for iOS
 
 Run `npx pod-install` after installing the npm package.
@@ -141,7 +150,6 @@ npm run prepare
 npm run prepub
 npm run pods
 ```
-
 
 ## Run the example project
 
