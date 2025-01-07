@@ -3,6 +3,6 @@
 import mod from "./ThermalibExpoModule";
 export { mod as thermalib };
 export * from "./types";
-export * from "./bleManager";
+export * from "./requestBluetoothPermission";
 
 export default mod;

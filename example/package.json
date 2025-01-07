@@ -7,6 +7,7 @@
     "start": "expo start --dev-client",
     "start:prod": "expo start --no-dev",
     "android": "expo run:android",
+    "android:release": "expo run:android --variant release",
     "ios": "npm run prebuild && expo run:ios",
     "web": "expo start --web",
     "prebuild": "npx expo prebuild",

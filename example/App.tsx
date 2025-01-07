@@ -1,47 +1,111 @@
 import { useEvent } from "expo";
-import thermalib, { requestBluetoothPermission } from "thermalib-expo";
+import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
 import {
   Button,
+  FlatList,
   Image,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
+  const [reading, setReading] = useState<number | undefined>(undefined);
+
+  const startScanning = async () => {
+    await requestBluetoothPermission();
+    await thermalib?.startScanning();
+    getDevices();
+  };
+
+  const getDevices = async () => {
+    await requestBluetoothPermission();
+    const devs = thermalib?.devices();
+    if (devs) {
+      setDevices(devs.map((d) => d as Device));
+    } else {
+      console.log("No devices");
+    }
+  };
+
+  const selectDevice = (deviceId: string) => {
+    console.log("Fetch device", deviceId);
+    const dev = thermalib.readDevice(deviceId) as { device?: Device };
+    if (dev?.device?.deviceName) {
+      setSelectedDev(dev.device);
+    }
+  };
+
+  const getTemperature = (deviceId: string) => {
+    console.log("Scan device", deviceId);
+    const read = thermalib.readTemperature(deviceId) as {
+      reading?: number;
+    };
+    setReading(read.reading);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      getDevices();
+    }, 3 * 1000);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
+      <Image
+        source={require("./assets/thermalib-1024.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <Text style={styles.header}>Thermalib Example</Text>
       <ScrollView style={styles.container}>
-        <Image
-          source={require("./assets/thermalib-1024.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-        <Text style={styles.header}>Thermalib Example</Text>
         <Group name="Async functions">
+          <Button title="startScanning" onPress={startScanning} />
+          <Button title="devices" onPress={getDevices} />
           <Button
-            title="startScanning"
-            onPress={async () => {
-              await requestBluetoothPermission();
-              await thermalib.startScanning();
-            }}
+            title="Get temperature"
+            onPress={() => getTemperature(selectedDev?.identifier || "")}
           />
-          <Button
-            title="devices"
-            onPress={async () => {
-              await requestBluetoothPermission();
-              const devs = await thermalib.devices();
-              console.log("devices", devs);
-            }}
-          />
+          {reading && (
+            <View style={styles.temperatureView}>
+              <Text style={styles.temperatureText}>Reading: {reading}</Text>
+            </View>
+          )}
         </Group>
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
         </Group>
       </ScrollView>
+      <Group name="Devices">
+        <FlatList
+          style={styles.deviceList}
+          data={devices}
+          keyExtractor={(i) => i.identifier}
+          renderItem={(li) => (
+            <TouchableOpacity onPress={() => selectDevice(li.item.identifier)}>
+              <View style={styles.deviceView}>
+                <Text
+                  key={
+                    li.item.identifier ||
+                    li.item.deviceName ||
+                    li.item.description
+                  }
+                >
+                  {li.item.identifier} {li.item.deviceName}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      </Group>
     </SafeAreaView>
   );
 }
@@ -55,11 +119,11 @@ function Group(props: { name: string; children: React.ReactNode }) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   header: {
-    fontSize: 30,
+    fontSize: 20,
     margin: 20,
-    testAlign: "center",
+    textAlign: "center",
     alignSelf: "center",
   },
   groupHeader: {
@@ -78,12 +142,57 @@ const styles = {
     backgroundColor: "#eee",
   },
   logo: {
-    with: "100%",
+    width: "100%",
     alignSelf: "center",
-    height: 180,
+    height: 100,
   },
   view: {
     flex: 1,
     height: 200,
   },
-};
+  deviceList: {
+    minHeight: 80,
+    gap: 5,
+  },
+  highlight: {
+    fontWeight: "700",
+  },
+  btnContainer: {
+    gap: 10,
+    flexDirection: "column",
+    alignContent: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  device: {
+    fontWeight: 500,
+    fontStyle: "italic",
+  },
+  instructions: {
+    flexShrink: 1,
+    maxHeight: 500,
+  },
+  deviceView: {
+    minHeight: 15,
+    marginVertical: 5,
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+  temperatureView: {
+    minHeight: 15,
+    marginVertical: 5,
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    backgroundColor: "#981435",
+    padding: 6,
+  },
+  temperatureText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+});

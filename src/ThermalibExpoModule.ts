@@ -11,6 +11,18 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
    * Start scanning for devices. After this is called, devices can be fetched.
    */
   startScanning(): Promise<void>;
+  /**
+   * Connect to the device with the given ID.
+   * @param deviceId ID of the device {@link Device.identifier}
+   */
+  readDevice(deviceId: string): Object;
+  /**
+   * Read temperature for given device.
+   *
+   * Assumes that the device is connected.
+   * @param deviceId ID of the device {@link Device.identifier}
+   */
+  readTemperature(deviceId: string): Object;
 }
 
 // This call loads the native module object from the JSI.

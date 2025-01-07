@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "thermalib-expo-example",
-    "slug": "thermalib-expo-example",
+    "name": "Thermalib Expo",
+    "slug": "thermalib-expo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/thermalib-1024.png",

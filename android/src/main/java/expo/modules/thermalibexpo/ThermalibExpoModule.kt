@@ -3,11 +3,11 @@ package expo.modules.thermalibexpo
 import android.content.Context
 import android.util.Log
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.Promise
 import expo.modules.kotlin.exception.Exceptions
 import expo.modules.kotlin.exception.UnexpectedException
 import uk.co.etiltd.thermalib.Device
@@ -61,21 +61,94 @@ class ThermalibExpoModule : Module() {
     }
 
     Function("devices") {
-      refreshDeviceList()
-      if(deviceList.isNotEmpty()){
-          val result = Arguments.createArray()
-          for(dev in deviceList){
-              result.pushMap(convertDeviceToWritebleMap(dev))
-          }
-          return@Function result
-      }
-
-      return@Function null
+      return@Function devices()
     }
     
     OnCreate {        
      initLib()
     }
+
+    Function("readTemperature") { deviceId: String? ->
+      if(deviceId == null){
+          throw UnexpectedException("Specify device id")
+      }
+
+      return@Function readTemperature(deviceId)
+    }
+
+    Function("readDevice") { deviceId: String? ->
+      return@Function readDevice(deviceId)
+    }
+  }
+
+  private fun devices(): WritableArray? {
+    refreshDeviceList()
+    if(deviceList.isNotEmpty()){
+        val result = Arguments.createArray()
+        for(dev in deviceList){
+            result.pushMap(convertDeviceToWritebleMap(dev))
+        }
+        return result
+    }
+
+    return null
+  }
+
+  private fun readTemperature(deviceId: String?): WritableMap {
+      val result = Arguments.createMap();
+      // get the device with that ID from ThermaLib, and put its name in the title
+      val device = TL.getDeviceWithIdentifierAndTransport(deviceId!!, ThermaLib.Transport.BLUETOOTH_LE)
+      if(device == null){
+          sendMessage("Found no match for $deviceId")
+          return result
+      }
+
+      if(device.sensors.size == 0 ){
+          sendMessage("Found no sensors on device $deviceId")
+          return result
+      }
+
+      val sensor = device.sensors.first()
+      val reading = sensor.reading
+      sendMessage("Read device. Value: $reading")
+
+      result.putDouble("reading", reading.toDouble())
+
+      return result
+  }
+
+  private fun readDevice(deviceId: String?): WritableMap {
+    val result = Arguments.createMap();
+    if(deviceId == null || deviceList.isEmpty()){
+      sendEvent("Specify device id")
+      return result;
+    }
+
+    val foundDev:Device? = deviceList.find { it.identifier == deviceId }
+    if(foundDev == null){
+        sendEvent("Found no match for $deviceId")
+        return result;
+    }
+
+    // Connect to the device
+    foundDev.requestConnection()
+
+    result.putMap("device", convertDeviceToWritebleMap(foundDev))
+
+    return result
+  }
+
+  private fun convertDeviceToWritebleMap(dev: Device): WritableMap {
+      val map = Arguments.createMap()
+      map.putString("identifier", dev.identifier)
+      map.putString("deviceName", dev.deviceName)
+      map.putString("connectionState", dev.connectionState.toString())
+      map.putString("modelNumber",dev.modelNumber)
+      map.putString("manufacturerName",dev.manufacturerName)
+      map.putInt("batteryLevel",dev.batteryLevel)
+      map.putString("description", dev.description())
+      map.putString("deviceType", dev.deviceType.toString())
+      return map
   }
 
   private fun initLib() {
@@ -109,19 +182,6 @@ class ThermalibExpoModule : Module() {
 
     TL.stopScanForDevices()
     TL.startScanForDevices(ThermaLib.Transport.BLUETOOTH_LE, 20)
-  }
-
-  private fun convertDeviceToWritebleMap(dev: Device): WritableMap {
-    val map = Arguments.createMap()
-    map.putString("identifier", dev.identifier)
-    map.putString("deviceName", dev.deviceName)
-    map.putString("connectionState", dev.connectionState.toString())
-    map.putString("modelNumber",dev.modelNumber)
-    map.putString("manufacturerName",dev.manufacturerName)
-    map.putInt("batteryLevel",dev.batteryLevel)
-    map.putString("description", dev.description())
-    map.putString("deviceType", dev.deviceType.toString())
-    return map
   }
 }
 
