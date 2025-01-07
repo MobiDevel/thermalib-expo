@@ -6,7 +6,7 @@
   "types": "build/index.d.ts",
   "scripts": {
     "adb:connect": "adb reverse tcp:8081 tcp:5555",
-    "android:build": "npm run prepare && npm run prepub && cd example && npm run android",
+    "android:build": "npm run prepare && npm run prepub && cd example && npm run prebuild:debug && npm run android --debug",
     "build": "expo-module build",
     "build:watch": "expo-module build --watch",
     "clean": "expo-module clean",
@@ -31,7 +31,10 @@
     "eti",
     "thermapen"
   ],
-  "repository": "https://github.com/thomashagstrom/thermalib-expo",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomashagstrom/thermalib-expo.git"
+  },
   "bugs": {
     "url": "https://github.com/thomashagstrom/thermalib-expo/issues"
   },
@@ -48,11 +51,21 @@
     "typescript": "^5.7.2"
   },
   "peerDependencies": {
-    "expo": "*",
-    "react": "*",
-    "react-native": "*"
+    "expo": ">=52.0.0",
+    "react": ">=18.3.1",
+    "react-native": ">=0.76.5"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
   },
   "jest": {
     "preset": "jest-expo"
+  },
+  "dependencies": {
+    "expo": "~52.0.23",
+    "react": "18.3.1",
+    "react-native": "0.76.5"
   }
 }

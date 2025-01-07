@@ -1,5 +1,5 @@
 import { useEvent } from "expo";
-import { requestBluetoothPermission, thermalib } from "thermalib-expo";
+import thermalib, { requestBluetoothPermission } from "thermalib-expo";
 import {
   Button,
   Image,
@@ -33,7 +33,7 @@ export default function App() {
             title="devices"
             onPress={async () => {
               await requestBluetoothPermission();
-              const devs = await thermalib.getDevices();
+              const devs = await thermalib.devices();
               console.log("devices", devs);
             }}
           />

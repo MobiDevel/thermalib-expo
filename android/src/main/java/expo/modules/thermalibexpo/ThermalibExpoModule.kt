@@ -98,7 +98,7 @@ class ThermalibExpoModule : Module() {
     // ThermaLib: start scan for Bluetooth LE devices, with a 5-second timeout.
     // Completion will be dispatched via tlCallbacks
     val isConnected = TL.isServiceConnected(ThermaLib.Transport.BLUETOOTH_LE)
-    if (isConnected) {
+    if (isConnected == false) {
         sendMessage("No bluetooth!")
         return
     }

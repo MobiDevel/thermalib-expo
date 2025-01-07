@@ -10,6 +10,7 @@
     "ios": "npm run prebuild && expo run:ios",
     "web": "expo start --web",
     "prebuild": "npx expo prebuild",
+    "prebuild:debug": "EXPO_DEBUG=1 npx expo prebuild",
     "prebuild:clean": "npx expo prebuild --clean",
     "pods": "npx pod-install",
     "build": "rm -rf android && rm -rf ios && npm run prebuild:clean"
