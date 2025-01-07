@@ -6,6 +6,24 @@ ETI Bluetherm LE Protocol 1.1 integration
 
 This is an integration to the thermalib SDK from the company ETI, to read temperature from their theromoter devices, e.g. Thermapen © Blue Theromoter (pictured).
 
+- [thermalib-expo](#thermalib-expo)
+- [Installation in managed Expo projects](#installation-in-managed-expo-projects)
+- [Installation in bare React Native projects](#installation-in-bare-react-native-projects)
+- [Usage](#usage)
+- [Permissions](#permissions)
+- [Scanning for devices](#scanning-for-devices)
+  - [Get available devices](#get-available-devices)
+  - [Connect to device](#connect-to-device)
+  - [Read temperature](#read-temperature)
+- [Configure for Android](#configure-for-android)
+- [Configure for iOS](#configure-for-ios)
+- [Running the Expo module example](#running-the-expo-module-example)
+  - [Build the library](#build-the-library)
+  - [Run the example project](#run-the-example-project)
+- [Contributing](#contributing)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 # Installation in managed Expo projects
 
 ```bash
@@ -30,13 +48,11 @@ When you call upon any function like `startScanning`, it is still imperative tha
 import { requestBluetoothPermission } from "thermalib-expo";
 
 await requestBluetoothPermission();
-
 ```
 
 # Scanning for devices
 
 ```typescript
-
 import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
 
 export default function App() {
@@ -56,10 +72,6 @@ export default function App() {
 ## Get available devices
 
 ```typescript
-
-
-
-
 import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
 export default function App() {
   const [devices, setDevices] = useState<Device[]>([]);
@@ -81,7 +93,6 @@ export default function App() {
 ## Connect to device
 
 ```typescript
-
 import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
 
 export default function App() {
@@ -133,11 +144,11 @@ This library depends on Bluetooth LE (low energy) and will add the required perm
   <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
   <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:targetApi="31"/>
   <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+```
+
 # Configure for iOS
 
 Run `npx pod-install` after installing the npm package.
-
-##
 
 # Running the Expo module example
 
