@@ -1,10 +1,11 @@
-import { Unit } from "./Unit";
+/* eslint-disable no-unused-vars */
+import {Unit} from './Unit';
 
 export enum GenericType {
-  UNKNOWN = "UNKNOWN",
-  TEMPERATURE = "TEMPERATURE",
-  HUMIDITY = "HUMIDITY",
-  ACIDITY = "ACIDITY",
+  UNKNOWN = 'UNKNOWN',
+  TEMPERATURE = 'TEMPERATURE',
+  HUMIDITY = 'HUMIDITY',
+  ACIDITY = 'ACIDITY',
 }
 
 export const GenericTypeUnits: Record<GenericType, Unit> = {

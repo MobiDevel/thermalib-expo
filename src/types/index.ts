@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type {Device} from './Device';
 export type OnLoadEventPayload = {
   url: string;

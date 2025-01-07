@@ -1,6 +1,7 @@
-import { NativeModule, requireNativeModule } from "expo";
+/* eslint-disable @typescript-eslint/no-wrapper-object-types */
+import {NativeModule, requireNativeModule} from 'expo';
 
-import { Device, ThermalibExpoModuleEvents } from "./types";
+import {Device, ThermalibExpoModuleEvents} from './types';
 
 declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents> {
   /**
@@ -26,4 +27,4 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
 }
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<ThermalibExpoModule>("ThermalibExpo");
+export default requireNativeModule<ThermalibExpoModule>('ThermalibExpo');

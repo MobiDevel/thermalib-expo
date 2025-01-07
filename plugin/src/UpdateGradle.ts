@@ -1,14 +1,14 @@
 const facebookDependency = 'implementation("com.facebook.react:react-android")';
 
-const localBroadcast = "com.android.support:localbroadcastmanager:28.0.0";
+const localBroadcast = 'com.android.support:localbroadcastmanager:28.0.0';
 
 const localBroadcastX =
-  "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0";
+  'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0';
 
 const withImplementation = (dependency: string) =>
   dependency && dependency.length !== 0
     ? `implementation("${dependency}")`
-    : "";
+    : '';
 
 const withResolutionStrategy = `configurations.all {
       resolutionStrategy {
@@ -36,14 +36,14 @@ export const UpdateGradle = (configModResultsContents: string) => {
 
   // Other dependencies and end block
   let otherDependencies = configModResultsContents.slice(
-    depBlockIndex + facebookDependency.length
+    depBlockIndex + facebookDependency.length,
   );
 
   // Replace duplicates
   otherDependencies = otherDependencies
-    .replace(withResolutionStrategy, "")
-    .replace(withImplementation(localBroadcastX), "")
-    .replace(withImplementation(localBroadcast), "");
+    .replace(withResolutionStrategy, '')
+    .replace(withImplementation(localBroadcastX), '')
+    .replace(withImplementation(localBroadcast), '');
 
   // Add new deps
   // https://stackoverflow.com/questions/74942623/how-can-i-add-to-default-config-in-build-gradle-in-expo-managed-project

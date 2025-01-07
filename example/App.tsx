@@ -1,5 +1,5 @@
-import { useEvent } from "expo";
-import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
+import {useEvent} from 'expo';
+import thermalib, {Device, requestBluetoothPermission} from 'thermalib-expo';
 import {
   Button,
   FlatList,
@@ -10,12 +10,12 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { useState } from "react";
-import { useEffect } from "react";
+} from 'react-native';
+import {useState} from 'react';
+import {useEffect} from 'react';
 
 export default function App() {
-  const onChangePayload = useEvent(thermalib, "onChange");
+  const onChangePayload = useEvent(thermalib, 'onChange');
   const [devices, setDevices] = useState<Device[]>([]);
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
   const [reading, setReading] = useState<number | undefined>(undefined);
@@ -32,20 +32,20 @@ export default function App() {
     if (devs) {
       setDevices(devs.map((d) => d as Device));
     } else {
-      console.log("No devices");
+      console.log('No devices');
     }
   };
 
   const selectDevice = (deviceId: string) => {
-    console.log("Fetch device", deviceId);
-    const dev = thermalib.readDevice(deviceId) as { device?: Device };
+    console.log('Fetch device', deviceId);
+    const dev = thermalib.readDevice(deviceId) as {device?: Device};
     if (dev?.device?.deviceName) {
       setSelectedDev(dev.device);
     }
   };
 
   const getTemperature = (deviceId: string) => {
-    console.log("Scan device", deviceId);
+    console.log('Scan device', deviceId);
     const read = thermalib.readTemperature(deviceId) as {
       reading?: number;
     };
@@ -61,7 +61,7 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <Image
-        source={require("./assets/thermalib-1024.png")}
+        source={require('./assets/thermalib-1024.png')}
         style={styles.logo}
         resizeMode="contain"
       />
@@ -72,7 +72,7 @@ export default function App() {
           <Button title="devices" onPress={getDevices} />
           <Button
             title="Get temperature"
-            onPress={() => getTemperature(selectedDev?.identifier || "")}
+            onPress={() => getTemperature(selectedDev?.identifier || '')}
           />
           {reading && (
             <View style={styles.temperatureView}>
@@ -110,7 +110,7 @@ export default function App() {
   );
 }
 
-function Group(props: { name: string; children: React.ReactNode }) {
+function Group(props: {name: string; children: React.ReactNode}) {
   return (
     <View style={styles.group}>
       <Text style={styles.groupHeader}>{props.name}</Text>
@@ -123,8 +123,8 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 20,
     margin: 20,
-    textAlign: "center",
-    alignSelf: "center",
+    textAlign: 'center',
+    alignSelf: 'center',
   },
   groupHeader: {
     fontSize: 20,
@@ -132,18 +132,18 @@ const styles = StyleSheet.create({
   },
   group: {
     margin: 20,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 10,
     padding: 20,
     gap: 10,
   },
   container: {
     flex: 1,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
   },
   logo: {
-    width: "100%",
-    alignSelf: "center",
+    width: '100%',
+    alignSelf: 'center',
     height: 100,
   },
   view: {
@@ -155,18 +155,18 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   highlight: {
-    fontWeight: "700",
+    fontWeight: '700',
   },
   btnContainer: {
     gap: 10,
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
+    flexDirection: 'column',
+    alignContent: 'center',
+    justifyContent: 'center',
     flex: 1,
   },
   device: {
     fontWeight: 500,
-    fontStyle: "italic",
+    fontStyle: 'italic',
   },
   instructions: {
     flexShrink: 1,
@@ -175,24 +175,24 @@ const styles = StyleSheet.create({
   deviceView: {
     minHeight: 15,
     marginVertical: 5,
-    borderBottomColor: "black",
+    borderBottomColor: 'black',
     borderBottomWidth: 1,
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   temperatureView: {
     minHeight: 15,
     marginVertical: 5,
-    borderBottomColor: "black",
+    borderBottomColor: 'black',
     borderBottomWidth: 1,
-    alignContent: "center",
-    justifyContent: "center",
-    backgroundColor: "#981435",
+    alignContent: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#981435',
     padding: 6,
   },
   temperatureText: {
-    color: "white",
-    fontWeight: "bold",
+    color: 'white',
+    fontWeight: 'bold',
     fontSize: 20,
   },
 });

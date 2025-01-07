@@ -1,15 +1,16 @@
-import { Platform, PermissionsAndroid, Alert } from "react-native";
+// eslint-disable-next-line react-native/split-platform-components
+import {Platform, PermissionsAndroid, Alert} from 'react-native';
 
 export const requestBluetoothPermission = async () => {
-  if (Platform.OS === "ios") {
+  if (Platform.OS === 'ios') {
     return true;
   }
-  if (Platform.OS === "android") {
+  if (Platform.OS === 'android') {
     const apiLevel = parseInt(Platform.Version.toString(), 10);
 
     if (apiLevel < 31 && PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION) {
       const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
@@ -23,15 +24,15 @@ export const requestBluetoothPermission = async () => {
       ]);
 
       return (
-        result["android.permission.BLUETOOTH_CONNECT"] ===
+        result['android.permission.BLUETOOTH_CONNECT'] ===
           PermissionsAndroid.RESULTS.GRANTED &&
-        result["android.permission.BLUETOOTH_SCAN"] ===
+        result['android.permission.BLUETOOTH_SCAN'] ===
           PermissionsAndroid.RESULTS.GRANTED
       );
     }
   }
 
-  Alert.alert("Permission have not been granted");
+  Alert.alert('Permission have not been granted');
 
   return false;
 };
