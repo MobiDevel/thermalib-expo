@@ -27,7 +27,7 @@ This is an integration to the thermalib SDK from the company ETI, to read temper
 # Installation in managed Expo projects
 
 ```bash
-npx expo install thermalib-expo
+npx expo install @mobione/thermalib-expo
 ```
 
 # Installation in bare React Native projects
