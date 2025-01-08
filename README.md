@@ -2,6 +2,9 @@
 
 ETI Bluetherm LE Protocol 1.1 integration
 
+
+[![Node.js Package](https://github.com/MobiDevel/thermalib-expo/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/MobiDevel/thermalib-expo/actions/workflows/npm-publish.yml) [![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@mobione/thermalib-expo/) [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) [![Expo](https://img.shields.io/badge/expo-blue?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev)
+
 ![](assets/20250107_121252_thermapen-blue-thermometer.jpg)
 
 This is an integration to the thermalib SDK from the company ETI, to read temperature from their theromoter devices, e.g. Thermapen © Blue Theromoter (pictured).
