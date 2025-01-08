@@ -181,7 +181,7 @@ For convenience, we've added a command that runs all the required steps from the
 1. Commit and push your feature.
 2. Up [version](https://docs.npmjs.com/about-semantic-versioning) in [`package.json`](./package.json) using the script `npm run version:next` or `yarn version:next`. This will tag and push to your branch.
 3. PR and merge your branch.
-4. [Draft a new Release](https://github.com/thomashagstrom/npm-github/releases) from that the new tag.
+4. [Draft a new Release](https://github.com/MobiDevel/thermalib-expo/releases) from that the new tag.
 5. GitHub Action builds and publishes. The package becomes available in "packages" GitHub page.
 
 # Contributing
