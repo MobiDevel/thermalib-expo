@@ -2,7 +2,6 @@
 
 ETI Bluetherm LE Protocol 1.1 integration
 
-
 [![Node.js Package](https://github.com/MobiDevel/thermalib-expo/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/MobiDevel/thermalib-expo/actions/workflows/npm-publish.yml) [![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)](https://www.npmjs.com/package/@mobione/thermalib-expo/) [![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/) ![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) [![Expo](https://img.shields.io/badge/expo-blue?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev)
 
 ![](assets/20250107_121252_thermapen-blue-thermometer.jpg)
@@ -33,6 +32,23 @@ This is an integration to the thermalib SDK from the company ETI, to read temper
 npx expo install @mobione/thermalib-expo
 ```
 
+Add `@mobione/thermalib-expo` to your `app.json`to include the module in Expo build:
+
+```json
+// ./app.json
+{
+  "expo": {
+    "name": "ThermalibApp",
+    "slug": "thermalib",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "plugins": [
+      "@mobione/thermalib-expo",
+    ]
+  }
+}
+```
+
 # Installation in bare React Native projects
 
 For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
@@ -48,7 +64,7 @@ Screenshot is from the included [example](./example/App.tsx).
 When you call upon any function like `startScanning`, it is still imperative that you **request bluetooth permissions** first. The module includes a standard helper to achieve this.
 
 ```typescript
-import { requestBluetoothPermission } from "thermalib-expo";
+import { requestBluetoothPermission } from "@mobioone/thermalib-expo";
 
 await requestBluetoothPermission();
 ```
@@ -56,7 +72,7 @@ await requestBluetoothPermission();
 # Scanning for devices
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
+import thermalib, { Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
@@ -75,7 +91,7 @@ export default function App() {
 ## Get available devices
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
 export default function App() {
   const [devices, setDevices] = useState<Device[]>([]);
 
@@ -96,7 +112,7 @@ export default function App() {
 ## Connect to device
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
 
 export default function App() {
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
@@ -118,7 +134,7 @@ export default function App() {
 ## Read temperature
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
 
 export default function App() {
   const [reading, setReading] = useState<number | undefined>(undefined);

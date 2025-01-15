@@ -9,7 +9,6 @@ import withLocalBroadcastManager from './withLocalBroadcastManager';
 
 const withBle: ConfigPlugin<{}> = (config, props = {}) => {
   const _props = props || {};
-  console.log('Expo Bluetherm LE Protocol 1.1 integration');
 
   if ('bluetoothPeripheralPermission' in _props) {
     WarningAggregator.addWarningIOS(

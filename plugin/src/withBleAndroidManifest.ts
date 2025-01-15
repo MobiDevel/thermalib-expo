@@ -177,7 +177,6 @@ export function addConnectPermissionToManifest(
         item.$['android:name'] === 'android.permission.BLUETOOTH_CONNECT',
     )
   ) {
-    console.log('Add BT connect permission');
     AndroidConfig.Manifest.ensureToolsAvailable(androidManifest);
     androidManifest.manifest['uses-permission']?.push({
       $: {
