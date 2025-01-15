@@ -29,8 +29,7 @@
     "test:cov": "npm run test -u --coverage --forceExit",
     "test:dev": "jest -u --maxWorkers=25% --forceExit",
     "test:watch": "jest -u --watchAll --maxWorkers=25%",
-    "ts": "tsc -p ./tsconfig.json",
-    "version:next": "npm version patch"
+    "ts": "tsc -p ./tsconfig.json"
   },
   "keywords": [
     "react-native",
