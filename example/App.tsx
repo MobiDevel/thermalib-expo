@@ -37,7 +37,6 @@ export default function App() {
   };
 
   const selectDevice = (deviceId: string) => {
-    console.log('Fetch device', deviceId);
     const dev = thermalib.readDevice(deviceId) as {device?: Device};
     if (dev?.device?.deviceName) {
       setSelectedDev(dev.device);
@@ -121,8 +120,7 @@ function Group(props: {name: string; children: React.ReactNode}) {
 
 const styles = StyleSheet.create({
   header: {
-    fontSize: 20,
-    margin: 20,
+    fontSize: 17,
     textAlign: 'center',
     alignSelf: 'center',
   },
@@ -144,7 +142,7 @@ const styles = StyleSheet.create({
   logo: {
     width: '100%',
     alignSelf: 'center',
-    height: 100,
+    height: 50,
   },
   view: {
     flex: 1,

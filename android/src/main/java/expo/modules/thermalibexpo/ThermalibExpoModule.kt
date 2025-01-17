@@ -17,6 +17,8 @@ val TAG =  "ThermalibExpo"
 
 lateinit var TL : ThermaLib
 
+var currentDevice: Device? = null
+
 // the ThermaLib devices the master list contains. Filled in by executing a ThermaLib scan for devices
 var deviceList = arrayOf<Device>()
 
@@ -68,6 +70,14 @@ class ThermalibExpoModule : Module() {
      initLib()
     }
 
+    OnDestroy{
+      TL.deregisterCallbacks(context)
+      val dev = currentDevice
+      if(dev !== null){
+          dev.requestDisconnection()
+      }
+    }
+
     Function("readTemperature") { deviceId: String? ->
       if(deviceId == null){
           throw UnexpectedException("Specify device id")
@@ -96,12 +106,7 @@ class ThermalibExpoModule : Module() {
 
   private fun readTemperature(deviceId: String?): WritableMap {
       val result = Arguments.createMap();
-      // get the device with that ID from ThermaLib, and put its name in the title
-      val device = TL.getDeviceWithIdentifierAndTransport(deviceId!!, ThermaLib.Transport.BLUETOOTH_LE)
-      if(device == null){
-          sendMessage("Found no match for $deviceId")
-          return result
-      }
+      val device = connectToDevice(deviceId) ?: return result
 
       if(device.sensors.size == 0 ){
           sendMessage("Found no sensors on device $deviceId")
@@ -117,25 +122,44 @@ class ThermalibExpoModule : Module() {
       return result
   }
 
+  private fun connectToDevice(deviceId: String?): Device? {
+        if(deviceId == null){
+            sendEvent("Specify device id")
+            return null;
+        }
+
+        val foundDev:Device? = TL.getDeviceWithIdentifierAndTransport(deviceId, ThermaLib.Transport.BLUETOOTH_LE)
+        if(foundDev == null){
+            sendEvent("Found no match for $deviceId")
+            return null;
+        }
+
+        currentDevice = foundDev;
+
+        // Connect to the device
+        if(!foundDev.isReady){
+            foundDev.requestConnection(5)
+        }
+
+        return foundDev
+    }
+
   private fun readDevice(deviceId: String?): WritableMap {
-    val result = Arguments.createMap();
-    if(deviceId == null || deviceList.isEmpty()){
-      sendEvent("Specify device id")
-      return result;
-    }
+        val result = Arguments.createMap();
+        if(deviceId == null){
+            sendEvent("Specify device id")
+            return result;
+        }
 
-    val foundDev:Device? = deviceList.find { it.identifier == deviceId }
-    if(foundDev == null){
-        sendEvent("Found no match for $deviceId")
-        return result;
-    }
+        val foundDev:Device? = connectToDevice(deviceId)
+        if(foundDev == null){
+            sendEvent("Found no match for $deviceId")
+            return result;
+        }
 
-    // Connect to the device
-    foundDev.requestConnection()
+        result.putMap("device", convertDeviceToWritebleMap(foundDev))
 
-    result.putMap("device", convertDeviceToWritebleMap(foundDev))
-
-    return result
+        return result
   }
 
   private fun convertDeviceToWritebleMap(dev: Device): WritableMap {
