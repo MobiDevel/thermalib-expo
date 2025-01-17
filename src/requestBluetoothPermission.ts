@@ -1,10 +1,13 @@
+import * as Location from 'expo-location';
 // eslint-disable-next-line react-native/split-platform-components
-import {Platform, PermissionsAndroid, Alert} from 'react-native';
+import {Alert, PermissionsAndroid, Platform} from 'react-native';
 
 export const requestBluetoothPermission = async () => {
   if (Platform.OS === 'ios') {
     return true;
   }
+  let fineLocation = true,
+    scanConnect = true;
   if (Platform.OS === 'android') {
     const apiLevel = parseInt(Platform.Version.toString(), 10);
 
@@ -12,8 +15,9 @@ export const requestBluetoothPermission = async () => {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
+      fineLocation = granted === PermissionsAndroid.RESULTS.GRANTED;
     }
+
     if (
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN &&
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT
@@ -23,13 +27,16 @@ export const requestBluetoothPermission = async () => {
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       ]);
 
-      return (
+      scanConnect =
         result['android.permission.BLUETOOTH_CONNECT'] ===
           PermissionsAndroid.RESULTS.GRANTED &&
         result['android.permission.BLUETOOTH_SCAN'] ===
-          PermissionsAndroid.RESULTS.GRANTED
-      );
+          PermissionsAndroid.RESULTS.GRANTED;
     }
+
+    const {status} = await Location.requestForegroundPermissionsAsync();
+
+    return fineLocation && scanConnect && status === 'granted';
   }
 
   Alert.alert('Permission have not been granted');

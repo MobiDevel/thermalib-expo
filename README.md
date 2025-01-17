@@ -27,9 +27,12 @@ This is an integration to the thermalib SDK from the company ETI, to read temper
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 # Installation in managed Expo projects
+Note that you need to install [expo-location](https://docs.expo.dev/versions/latest/sdk/location/) as well to make BLE work on Android API >= 30.
+
+Make sure to [configure your app.json](https://docs.expo.dev/versions/latest/sdk/location/#configuration-in-app-config) accordingly.
 
 ```bash
-npx expo install @mobione/thermalib-expo
+npx expo install @mobione/thermalib-expo expo-location
 ```
 
 Add `@mobione/thermalib-expo` to your `app.json`to include the module in Expo build:

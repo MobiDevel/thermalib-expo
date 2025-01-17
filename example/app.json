@@ -26,6 +26,12 @@
     "web": {
       "favicon": "./assets/thermalib-48.png"
     },
-    "plugins": ["../app.plugin.js"]
+    "plugins": [
+      "../app.plugin.js",
+      ["expo-location",
+      {
+        "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+      }]
+    ]
   }
 }

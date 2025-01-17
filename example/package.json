@@ -20,7 +20,8 @@
     "expo": "^52.0.23",
     "react": "18.3.1",
     "react-native": "^0.76.5",
-    "thermalib-expo": "../"
+    "thermalib-expo": "../",
+    "expo-location": "~18.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
