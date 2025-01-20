@@ -13,6 +13,13 @@ import expo.modules.kotlin.exception.UnexpectedException
 import uk.co.etiltd.thermalib.Device
 import uk.co.etiltd.thermalib.ThermaLib
 
+/**
+ * Interface for propagating log messages to the parent class
+ */
+interface ThermaLibLogListener {
+    fun onLogMessage(message: String)
+}
+
 val TAG =  "ThermalibExpo"
 
 lateinit var TL : ThermaLib
@@ -26,11 +33,10 @@ fun refreshDeviceList() {
   deviceList = TL.deviceList.toTypedArray()
 }
 
-class ThermalibExpoModule : Module() {
+class ThermalibExpoModule : Module(), ThermaLibLogListener {
   private val context: Context
   get() = requireNotNull(appContext.reactContext)
 
-  
   fun sendMessage(msg: String) {
       Log.d(TAG, msg)
       try {
@@ -42,6 +48,11 @@ class ThermalibExpoModule : Module() {
       } catch (ex: Exception) {
           ex.message?.let { Log.d(TAG, it) }
       }
+  }
+
+  override fun onLogMessage(message: String) {
+    // This method is triggered by ThermaLibCallbacks and logs the message
+    sendMessage(message)
   }
 
   // Each module class must implement the definition function. The definition consists of components
@@ -67,7 +78,20 @@ class ThermalibExpoModule : Module() {
     }
     
     OnCreate {        
-     initLib()
+      sendMessage("Init ThermaLib")
+
+      TL = ThermaLib.instance(context)
+      // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
+      // it has been called. See the documentation for ThermaLib.UnsupportedCallHandling
+      //
+      TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
+      sendMessage("Supported protocols: ${TL.supportedTransports}")
+      sendMessage(
+          "Register callbacks on ${TL}"
+      )
+
+      // Register ThermaLibCallbacks and pass `this` as the listener
+      TL.registerCallbacks(ThermaLibCallbacks(this@ThermalibExpoModule), TAG)
     }
 
     OnDestroy{
@@ -175,22 +199,6 @@ class ThermalibExpoModule : Module() {
       return map
   }
 
-  private fun initLib() {
-      sendMessage("Init ThermaLib")
-
-      TL = ThermaLib.instance(context)
-      // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
-      // it has been called. See the documentation for ThermaLib.UnsupportedCallHandling
-      //
-      TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
-      sendMessage("Supported protocols: ${TL.supportedTransports}")
-      sendMessage(
-          "Register callbacks on ${TL}"
-      )
-
-      TL.registerCallbacks(thermaLibCallbacks, TAG)
-  }
-
   private fun startScanning() {
     // ThermaLib: start scan for Bluetooth LE devices, with a 5-second timeout.
     // Completion will be dispatched via tlCallbacks
@@ -210,31 +218,39 @@ class ThermalibExpoModule : Module() {
 }
 
 /**
-* Illustrates: Handling of scan-time ThermaLib callbacks
-*/
-val thermaLibCallbacks = object : ThermaLib.ClientCallbacksBase() {
+ * Illustrates: Handling of scan-time ThermaLib callbacks with parent class logging
+ */
+class ThermaLibCallbacks(private val logListener: ThermaLibLogListener?) : ThermaLib.ClientCallbacksBase() {
+  private fun log(message: String) {
+      // Log to Logcat
+      Log.d(TAG, message)
+
+      // Forward the log message to the listener if provided
+      logListener?.onLogMessage(message)
+  }
+
   override fun onScanComplete(
       transport: Int, scanResult: ThermaLib.ScanResult, numDevices: Int, errorMsg: String?
   ) {
       if (errorMsg !== null) {
-        Log.d(TAG, errorMsg)
+        log(errorMsg)
       }
 
       if (scanResult == ThermaLib.ScanResult.SUCCESS) {
-        Log.d(TAG, 
+        log(
               "$numDevices found in scan"
           )
 
           refreshDeviceList()
       } else {
-        Log.d(TAG, 
+        log(
               "Scan failed: ${scanResult.desc}"
           )
       }
   }
 
   override fun onNewDevice(device: Device, timestamp: Long) {
-    Log.d(TAG, 
+    log(
           "New device found: ${device.deviceName}"
       )
       refreshDeviceList()
@@ -243,13 +259,13 @@ val thermaLibCallbacks = object : ThermaLib.ClientCallbacksBase() {
   override fun onDeviceConnectionStateChanged(
       device: Device, newState: Device.ConnectionState?, timestamp: Long
   ) {
-    Log.d(TAG, 
+    log(
           "Device ${device.identifier} changed state -> ${device.connectionState}"
       )
   }
 
   override fun onDeviceUpdated(device: Device, timestamp: Long) {
-    Log.d(TAG, 
+    log(
           "Device ${device.identifier} updated"
       )
   }
