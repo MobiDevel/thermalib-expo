@@ -6,16 +6,22 @@ export const requestBluetoothPermission = async () => {
   if (Platform.OS === 'ios') {
     return true;
   }
-  let fineLocation = true,
-    scanConnect = true;
+
   if (Platform.OS === 'android') {
+    const {status} = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      Alert.alert('Location permission have not been granted');
+      return;
+    }
+
     const apiLevel = parseInt(Platform.Version.toString(), 10);
 
     if (apiLevel < 31 && PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION) {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
-      fineLocation = granted === PermissionsAndroid.RESULTS.GRANTED;
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
     }
 
     if (
@@ -27,19 +33,16 @@ export const requestBluetoothPermission = async () => {
         PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       ]);
 
-      scanConnect =
+      return (
         result['android.permission.BLUETOOTH_CONNECT'] ===
           PermissionsAndroid.RESULTS.GRANTED &&
         result['android.permission.BLUETOOTH_SCAN'] ===
-          PermissionsAndroid.RESULTS.GRANTED;
+          PermissionsAndroid.RESULTS.GRANTED
+      );
     }
-
-    const {status} = await Location.requestForegroundPermissionsAsync();
-
-    return fineLocation && scanConnect && status === 'granted';
   }
 
-  Alert.alert('Permission have not been granted');
+  Alert.alert('Bluetooth permission have not been granted');
 
   return false;
 };
