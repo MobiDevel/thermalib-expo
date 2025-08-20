@@ -14,24 +14,34 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "expo.modules.thermalibexpo.example"
+      "bundleIdentifier": "expo.modules.thermalibexpo.example",
+      "appleTeamId": "JJ22V7NRQ8"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/thermalib-1024.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "expo.modules.thermalibexpo.example"
+      "package": "expo.modules.thermalibexpo.example",
+      "permissions": [
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/thermalib-48.png"
     },
     "plugins": [
       "../app.plugin.js",
-      ["expo-location",
-      {
-        "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-      }]
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
     ]
   }
 }
