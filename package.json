@@ -14,7 +14,7 @@
     "clean": "npm run clean:jest && expo-module clean",
     "clean:jest": "rm -rf ./.jest",
     "ios": "npm run pods && expo run:ios --device",
-    "ios:build": "npm run prepare && npm run prepub && npm run pods && cd example && npm run prebuild:debug && npm run ios --debug",
+    "ios:build": "npm run prepare && npm run prepub && cd example && npm run prebuild:debug && npm run pods && npm run ios --debug --device",
     "lint:ci": "npm run lint:es",
     "lint:errors": "npm run ts & npm run lint:es --fix --quiet",
     "lint:es": "expo-module lint",
