@@ -17,8 +17,8 @@ Pod::Spec.new do |s|
   s.swift_version = "5.0"
 
   # ⚠️ Only your Expo module sources, not Pods
-  s.source_files  = "ios/**/*.{swift}"
-  s.exclude_files = "ios/Pods/**/*", "ios/build/**/*"
+  s.source_files  = "ios/ThermalibExpoModule.swift" 
+  s.exclude_files = "ios/**/AppDelegate.*", "ios/**/SceneDelegate.*", "ios/**/main.*", "ios/**/Info.plist", "ios/Pods/**/*", "ios/build/**/*"
 
   # Expo module runtime
   s.dependency "ExpoModulesCore"

@@ -17,13 +17,11 @@
 		505AA5812E55BCFC001042E6 /* ThermalibExpoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505AA5802E55BCFC001042E6 /* ThermalibExpoModule.swift */; };
 		6AE387AE5F2AE382CE199DEE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8CF20AA4D25D86437BA1CE /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* mobionethermalibexpo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mobionethermalibexpo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = mobionethermalibexpo/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mobionethermalibexpo/Info.plist; sourceTree = "<group>"; };
 		30090779E978075FEB5445F1 /* libPods-mobionethermalibexpo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobionethermalibexpo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3B10DF298D24C30F624AC5 /* Pods-mobionethermalibexpo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobionethermalibexpo.release.xcconfig"; path = "Target Support Files/Pods-mobionethermalibexpo/Pods-mobionethermalibexpo.release.xcconfig"; sourceTree = "<group>"; };
 		505AA5712E55BB5E001042E6 /* ThermaLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThermaLib.h; sourceTree = "<group>"; };
@@ -42,7 +40,6 @@
 		C76C40CA38D4933E1E548895 /* Pods-mobionethermalibexpo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobionethermalibexpo.debug.xcconfig"; path = "Target Support Files/Pods-mobionethermalibexpo/Pods-mobionethermalibexpo.debug.xcconfig"; sourceTree = "<group>"; };
 		E6CB7BDDDFABF1519A263F79 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = mobionethermalibexpo/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = mobionethermalibexpo/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* mobionethermalibexpo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "mobionethermalibexpo-Bridging-Header.h"; path = "mobionethermalibexpo/mobionethermalibexpo-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,11 +62,9 @@
 			isa = PBXGroup;
 			children = (
 				505AA5802E55BCFC001042E6 /* ThermalibExpoModule.swift */,
-				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				F11748442D0722820044C1D9 /* mobionethermalibexpo-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				E6CB7BDDDFABF1519A263F79 /* PrivacyInfo.xcprivacy */,
 			);
@@ -367,7 +362,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				505AA5812E55BCFC001042E6 /* ThermalibExpoModule.swift in Sources */,
-				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				6AE387AE5F2AE382CE199DEE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -664,10 +658,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -722,10 +713,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
