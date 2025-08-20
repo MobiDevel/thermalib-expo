@@ -3,8 +3,8 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "thermalib-expo": ["../src/index"],
-      "thermalib-expo/*": ["../src/*"]
+      "@mobione/thermalib-expo": ["../src/index"],
+      "@mobione/thermalib-expo/*": ["../src/*"]
     }
   }
 }

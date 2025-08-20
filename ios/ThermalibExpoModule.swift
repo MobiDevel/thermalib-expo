@@ -20,7 +20,7 @@ public class ThermalibExpoModule: Module {
     Name("ThermalibExpo")
 
     // Events JS can subscribe to
-    Events("onMessageChanged")
+    Events("onChange")
 
     OnStartObserving {
       self.hasListeners = true

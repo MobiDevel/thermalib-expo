@@ -1,4 +1,9 @@
 import {useEvent} from 'expo'; // App.tsx
+import {requireOptionalNativeModule} from 'expo-modules-core';
+console.log(
+  'Has ThermalibExpo?',
+  !!requireOptionalNativeModule('ThermalibExpo'),
+);
 import thermalib, {
   Device,
   requestBluetoothPermission,
@@ -52,6 +57,10 @@ export default function App() {
     const read = thermalib.readTemperature(deviceId) as {reading?: number};
     setReading(read.reading);
   };
+
+  useEffect(() => {
+    (thermalib as any).initThermaLib?.();
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
