@@ -11,6 +11,10 @@
 		34A77E6E95F95E521304D78D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E6CB7BDDDFABF1519A263F79 /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4FBA645B2A63F984D201816E /* libPods-mobionethermalibexpo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30090779E978075FEB5445F1 /* libPods-mobionethermalibexpo.a */; };
+		505AA57B2E55BB5E001042E6 /* libThermaLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 505AA5792E55BB5E001042E6 /* libThermaLib.a */; };
+		505AA57D2E55BBA4001042E6 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 505AA57C2E55BBA4001042E6 /* CoreBluetooth.framework */; };
+		505AA57F2E55BBA9001042E6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 505AA57E2E55BBA9001042E6 /* CoreLocation.framework */; };
+		505AA5812E55BCFC001042E6 /* ThermalibExpoModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 505AA5802E55BCFC001042E6 /* ThermalibExpoModule.swift */; };
 		6AE387AE5F2AE382CE199DEE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E8CF20AA4D25D86437BA1CE /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
@@ -22,11 +26,21 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = mobionethermalibexpo/Info.plist; sourceTree = "<group>"; };
 		30090779E978075FEB5445F1 /* libPods-mobionethermalibexpo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobionethermalibexpo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4C3B10DF298D24C30F624AC5 /* Pods-mobionethermalibexpo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobionethermalibexpo.release.xcconfig"; path = "Target Support Files/Pods-mobionethermalibexpo/Pods-mobionethermalibexpo.release.xcconfig"; sourceTree = "<group>"; };
+		505AA5712E55BB5E001042E6 /* ThermaLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThermaLib.h; sourceTree = "<group>"; };
+		505AA5722E55BB5E001042E6 /* TLConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLConstants.h; sourceTree = "<group>"; };
+		505AA5732E55BB5E001042E6 /* TLDateStamp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLDateStamp.h; sourceTree = "<group>"; };
+		505AA5742E55BB5E001042E6 /* TLDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLDevice.h; sourceTree = "<group>"; };
+		505AA5752E55BB5E001042E6 /* TLRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLRange.h; sourceTree = "<group>"; };
+		505AA5762E55BB5E001042E6 /* TLSensor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TLSensor.h; sourceTree = "<group>"; };
+		505AA5792E55BB5E001042E6 /* libThermaLib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libThermaLib.a; sourceTree = "<group>"; };
+		505AA57C2E55BBA4001042E6 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		505AA57E2E55BBA9001042E6 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		505AA5802E55BCFC001042E6 /* ThermalibExpoModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThermalibExpoModule.swift; sourceTree = "<group>"; };
 		8E8CF20AA4D25D86437BA1CE /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-mobionethermalibexpo/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = mobionethermalibexpo/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		C76C40CA38D4933E1E548895 /* Pods-mobionethermalibexpo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobionethermalibexpo.debug.xcconfig"; path = "Target Support Files/Pods-mobionethermalibexpo/Pods-mobionethermalibexpo.debug.xcconfig"; sourceTree = "<group>"; };
-		E6CB7BDDDFABF1519A263F79 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = mobionethermalibexpo/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		E6CB7BDDDFABF1519A263F79 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = mobionethermalibexpo/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = mobionethermalibexpo/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* mobionethermalibexpo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "mobionethermalibexpo-Bridging-Header.h"; path = "mobionethermalibexpo/mobionethermalibexpo-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,6 +51,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				505AA57F2E55BBA9001042E6 /* CoreLocation.framework in Frameworks */,
+				505AA57D2E55BBA4001042E6 /* CoreBluetooth.framework in Frameworks */,
+				505AA57B2E55BB5E001042E6 /* libThermaLib.a in Frameworks */,
 				4FBA645B2A63F984D201816E /* libPods-mobionethermalibexpo.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,6 +64,7 @@
 		13B07FAE1A68108700A75B9A /* mobionethermalibexpo */ = {
 			isa = PBXGroup;
 			children = (
+				505AA5802E55BCFC001042E6 /* ThermalibExpoModule.swift */,
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
 				F11748442D0722820044C1D9 /* mobionethermalibexpo-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
@@ -69,15 +87,48 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				505AA57E2E55BBA9001042E6 /* CoreLocation.framework */,
+				505AA57C2E55BBA4001042E6 /* CoreBluetooth.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				30090779E978075FEB5445F1 /* libPods-mobionethermalibexpo.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		505AA5772E55BB5E001042E6 /* ThermaLib */ = {
+			isa = PBXGroup;
+			children = (
+				505AA5712E55BB5E001042E6 /* ThermaLib.h */,
+				505AA5722E55BB5E001042E6 /* TLConstants.h */,
+				505AA5732E55BB5E001042E6 /* TLDateStamp.h */,
+				505AA5742E55BB5E001042E6 /* TLDevice.h */,
+				505AA5752E55BB5E001042E6 /* TLRange.h */,
+				505AA5762E55BB5E001042E6 /* TLSensor.h */,
+			);
+			path = ThermaLib;
+			sourceTree = "<group>";
+		};
+		505AA5782E55BB5E001042E6 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				505AA5772E55BB5E001042E6 /* ThermaLib */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		505AA57A2E55BB5E001042E6 /* ThermaLib */ = {
+			isa = PBXGroup;
+			children = (
+				505AA5782E55BB5E001042E6 /* include */,
+				505AA5792E55BB5E001042E6 /* libThermaLib.a */,
+			);
+			path = ThermaLib;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				505AA57A2E55BB5E001042E6 /* ThermaLib */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -120,7 +171,6 @@
 				C76C40CA38D4933E1E548895 /* Pods-mobionethermalibexpo.debug.xcconfig */,
 				4C3B10DF298D24C30F624AC5 /* Pods-mobionethermalibexpo.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -316,6 +366,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				505AA5812E55BCFC001042E6 /* ThermalibExpoModule.swift in Sources */,
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
 				6AE387AE5F2AE382CE199DEE /* ExpoModulesProvider.swift in Sources */,
 			);
@@ -331,16 +382,101 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JJ22V7NRQ8;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
+					"\"${PODS_ROOT}/Headers/Public/Expo\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoFileSystem\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoLocation\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoModulesCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/RCT-Folly\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTDeprecation\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Fabric\"",
+					"\"${PODS_ROOT}/Headers/Public/React-FabricComponents\"",
+					"\"${PODS_ROOT}/Headers/Public/React-FabricImage\"",
+					"\"${PODS_ROOT}/Headers/Public/React-ImageManager\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Mapbuffer\"",
+					"\"${PODS_ROOT}/Headers/Public/React-NativeModulesApple\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTAnimation\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTAppDelegate\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTFBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTFabric\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTRuntime\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeApple\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeCore\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeHermes\"",
+					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-debug\"",
+					"\"${PODS_ROOT}/Headers/Public/React-defaultsnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-domnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-featureflags\"",
+					"\"${PODS_ROOT}/Headers/Public/React-featureflagsnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-graphics\"",
+					"\"${PODS_ROOT}/Headers/Public/React-hermes\"",
+					"\"${PODS_ROOT}/Headers/Public/React-idlecallbacksnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jserrorhandler\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspectortracing\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsitooling\"",
+					"\"${PODS_ROOT}/Headers/Public/React-logger\"",
+					"\"${PODS_ROOT}/Headers/Public/React-microtasksnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-oscompat\"",
+					"\"${PODS_ROOT}/Headers/Public/React-perflogger\"",
+					"\"${PODS_ROOT}/Headers/Public/React-performancetimeline\"",
+					"\"${PODS_ROOT}/Headers/Public/React-rendererconsistency\"",
+					"\"${PODS_ROOT}/Headers/Public/React-renderercss\"",
+					"\"${PODS_ROOT}/Headers/Public/React-rendererdebug\"",
+					"\"${PODS_ROOT}/Headers/Public/React-runtimeexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-runtimescheduler\"",
+					"\"${PODS_ROOT}/Headers/Public/React-timing\"",
+					"\"${PODS_ROOT}/Headers/Public/React-utils\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactAppDependencyProvider\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCodegen\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/SocketRocket\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/boost\"",
+					"\"${PODS_ROOT}/Headers/Public/fast_float\"",
+					"\"${PODS_ROOT}/Headers/Public/fmt\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/hermes-engine\"",
+					"\"$(PODS_ROOT)/DoubleConversion\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Expo/Swift Compatibility Header\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ExpoModulesCore/Swift Compatibility Header\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"$(PODS_ROOT)/boost\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"$(SRCROOT)/ThermaLib/include\"/**",
 				);
 				INFOPLIST_FILE = mobionethermalibexpo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThermaLib",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
@@ -365,11 +501,96 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JJ22V7NRQ8;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_ROOT}/Headers/Public\"",
+					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
+					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
+					"\"${PODS_ROOT}/Headers/Public/Expo\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoFileSystem\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoLocation\"",
+					"\"${PODS_ROOT}/Headers/Public/ExpoModulesCore\"",
+					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
+					"\"${PODS_ROOT}/Headers/Public/RCT-Folly\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTDeprecation\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
+					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Fabric\"",
+					"\"${PODS_ROOT}/Headers/Public/React-FabricComponents\"",
+					"\"${PODS_ROOT}/Headers/Public/React-FabricImage\"",
+					"\"${PODS_ROOT}/Headers/Public/React-ImageManager\"",
+					"\"${PODS_ROOT}/Headers/Public/React-Mapbuffer\"",
+					"\"${PODS_ROOT}/Headers/Public/React-NativeModulesApple\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTAnimation\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTAppDelegate\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTBlob\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTFBReactNativeSpec\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTFabric\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTRuntime\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeApple\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeCore\"",
+					"\"${PODS_ROOT}/Headers/Public/React-RuntimeHermes\"",
+					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
+					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
+					"\"${PODS_ROOT}/Headers/Public/React-debug\"",
+					"\"${PODS_ROOT}/Headers/Public/React-defaultsnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-domnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-featureflags\"",
+					"\"${PODS_ROOT}/Headers/Public/React-featureflagsnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-graphics\"",
+					"\"${PODS_ROOT}/Headers/Public/React-hermes\"",
+					"\"${PODS_ROOT}/Headers/Public/React-idlecallbacksnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jserrorhandler\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsinspectortracing\"",
+					"\"${PODS_ROOT}/Headers/Public/React-jsitooling\"",
+					"\"${PODS_ROOT}/Headers/Public/React-logger\"",
+					"\"${PODS_ROOT}/Headers/Public/React-microtasksnativemodule\"",
+					"\"${PODS_ROOT}/Headers/Public/React-oscompat\"",
+					"\"${PODS_ROOT}/Headers/Public/React-perflogger\"",
+					"\"${PODS_ROOT}/Headers/Public/React-performancetimeline\"",
+					"\"${PODS_ROOT}/Headers/Public/React-rendererconsistency\"",
+					"\"${PODS_ROOT}/Headers/Public/React-renderercss\"",
+					"\"${PODS_ROOT}/Headers/Public/React-rendererdebug\"",
+					"\"${PODS_ROOT}/Headers/Public/React-runtimeexecutor\"",
+					"\"${PODS_ROOT}/Headers/Public/React-runtimescheduler\"",
+					"\"${PODS_ROOT}/Headers/Public/React-timing\"",
+					"\"${PODS_ROOT}/Headers/Public/React-utils\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactAppDependencyProvider\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCodegen\"",
+					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
+					"\"${PODS_ROOT}/Headers/Public/SocketRocket\"",
+					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
+					"\"${PODS_ROOT}/Headers/Public/boost\"",
+					"\"${PODS_ROOT}/Headers/Public/fast_float\"",
+					"\"${PODS_ROOT}/Headers/Public/fmt\"",
+					"\"${PODS_ROOT}/Headers/Public/glog\"",
+					"\"${PODS_ROOT}/Headers/Public/hermes-engine\"",
+					"\"$(PODS_ROOT)/DoubleConversion\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/Expo/Swift Compatibility Header\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/ExpoModulesCore/Swift Compatibility Header\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"$(PODS_ROOT)/boost\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
+					"\"$(PODS_ROOT)/Headers/Private/Yoga\"",
+					"\"$(SRCROOT)/ThermaLib/include\"/**",
+				);
 				INFOPLIST_FILE = mobionethermalibexpo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ThermaLib",
 				);
 				MARKETING_VERSION = 1.0;
 				OTHER_LDFLAGS = (
@@ -441,10 +662,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -499,10 +717,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
