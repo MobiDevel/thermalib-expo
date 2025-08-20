@@ -14,13 +14,14 @@
     "clean": "npm run clean:jest && expo-module clean",
     "clean:jest": "rm -rf ./.jest",
     "ios": "expo run:ios --device",
-    "ios:build": "npm run prepare && npm run prepub && cd example && npm run prebuild:debug && npm run ios --debug --device",
+    "ios:build": "npm run prepare && npm run prepub && npm run pods && cd example && npm run prebuild:debug && npm run ios --debug --device",
     "lint:ci": "npm run lint:es",
     "lint:errors": "npm run ts & npm run lint:es --fix --quiet",
     "lint:es": "expo-module lint",
     "lint": "npm run ts && npm run lint:es --fix",
     "open:android": "open -a \"Android Studio\" example/android",
     "open:ios": "xed example/ios",
+    "pods": "npx pod-install",
     "prepare": "expo-module prepare && husky",
     "prepub": "npm run prepublishOnly",
     "prepublishOnly": "expo-module prepublishOnly",
@@ -88,6 +89,5 @@
     "cacheDirectory": ".jest/cache",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
