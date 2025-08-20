@@ -1,29 +1,33 @@
 require 'json'
 
-package = JSON.parse(File.read(File.join(__dir__, '..', 'package.json')))
+package = JSON.parse(File.read(File.join(__dir__, 'package.json')))
 
 Pod::Spec.new do |s|
-  s.name           = 'ThermalibExpo'
-  s.version        = package['version']
-  s.summary        = package['description']
-  s.description    = package['description']
-  s.license        = package['license']
-  s.author         = package['author']
-  s.homepage       = package['homepage']
-  s.platforms      = {
-    :ios => '15.1',
-    :tvos => '15.1'
-  }
-  s.swift_version  = '5.4'
-  s.source         = { git: 'https://github.com/thomashagstrom/thermalib-expo' }
-  s.static_framework = true
+  s.name         = "thermalib-expo"
+  s.version      = package["version"]
+  s.summary      = package["description"] || "Expo wrapper for ThermaLib"
+  s.license      = package["license"] || "MIT"
+  s.author       = package["author"] || "MobiDevel"
+  s.homepage     = package["homepage"] || "https://github.com/thomashagstrom/thermalib-expo"
+  s.source       = { :git => package["repository"] ? package["repository"]["url"] : "" , :tag => "#{s.version}" }
 
-  s.dependency 'ExpoModulesCore'
+  s.platforms    = { :ios => "13.0" }
+  s.source_files = "ios/**/*.{h,m,mm,swift}"
 
-  # Swift/Objective-C compatibility
+  # Swift support
+  s.swift_version = '5.0'
+
+  # Expo Modules Core
+  s.dependency "ExpoModulesCore"
+
+  # Link ThermaLib static lib + headers (adjust paths if needed)
+  s.vendored_libraries = "ios/ThermaLib/libThermaLib.a"
+  s.preserve_paths     = "ios/ThermaLib/include/**"
   s.pod_target_xcconfig = {
-    'DEFINES_MODULE' => 'YES',
+    'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/ios/ThermaLib/include"',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++'
   }
 
-  s.source_files = "**/*.{h,m,mm,swift,hpp,cpp}"
+  # Required Apple frameworks
+  s.frameworks = ['CoreBluetooth']
 end

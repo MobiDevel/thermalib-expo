@@ -14,7 +14,7 @@
     "clean": "npm run clean:jest && expo-module clean",
     "clean:jest": "rm -rf ./.jest",
     "expo-module": "expo-module",
-    "ios": "expo run:ios",
+    "ios": "expo run:ios --device",
     "lint:ci": "npm run lint:es",
     "lint:errors": "npm run ts & npm run lint:es --fix --quiet",
     "lint:es": "expo-module lint",
@@ -29,7 +29,8 @@
     "test:cov": "npm run test -u --coverage --forceExit",
     "test:dev": "jest -u --maxWorkers=25% --forceExit",
     "test:watch": "jest -u --watchAll --maxWorkers=25%",
-    "ts": "tsc -p ./tsconfig.json"
+    "ts": "tsc -p ./tsconfig.json",
+    "verify": "npm run ts && npm run lint && npm run test:dev"
   },
   "keywords": [
     "react-native",

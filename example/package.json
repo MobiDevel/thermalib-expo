@@ -8,7 +8,7 @@
     "start:prod": "expo start --no-dev",
     "android": "expo run:android",
     "android:release": "expo run:android --variant release",
-    "ios": "npm run prebuild && expo run:ios",
+    "ios": "npm run prebuild && expo run:ios --device",
     "web": "expo start --web",
     "prebuild": "npx expo prebuild",
     "prebuild:debug": "EXPO_DEBUG=1 npx expo prebuild",
@@ -17,11 +17,11 @@
     "build": "rm -rf android && rm -rf ios && npm run prebuild:clean"
   },
   "dependencies": {
-    "expo": "^52.0.23",
+    "expo": "~52.0.47",
+    "expo-location": "~18.0.10",
     "react": "18.3.1",
-    "react-native": "^0.76.5",
-    "thermalib-expo": "../",
-    "expo-location": "~18.0.5"
+    "react-native": "0.76.9",
+    "thermalib-expo": "../"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
