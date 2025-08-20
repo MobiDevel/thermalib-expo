@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "adb:connect": "adb reverse tcp:8081 tcp:5555",
-    "start": "expo start --dev-client",
+    "start": "expo start --dev-client -c",
     "start:prod": "expo start --no-dev",
     "android": "expo run:android",
     "android:release": "expo run:android --variant release",
@@ -22,7 +22,7 @@
     "expo-location": "~18.1.6",
     "react": "19.0.0",
     "react-native": "0.79.5",
-    "thermalib-expo": "../"
+    "@mobione/thermalib-expo": "../"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
