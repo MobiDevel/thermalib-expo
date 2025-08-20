@@ -16,20 +16,29 @@ Pod::Spec.new do |s|
   s.platform      = :ios, "13.0"
   s.swift_version = "5.0"
 
-  # ⚠️ Only your Expo module sources, not Pods
-  s.source_files  = "ios/ThermalibExpoModule.swift" 
+  s.static_framework = true
+
+  # Only your Expo module Swift files
+  s.source_files  = "ios/**/*.{swift}"
   s.exclude_files = "ios/**/AppDelegate.*", "ios/**/SceneDelegate.*", "ios/**/main.*", "ios/**/Info.plist", "ios/Pods/**/*", "ios/build/**/*"
 
-  # Expo module runtime
+  # Expo runtime
   s.dependency "ExpoModulesCore"
 
-  # Vendored ThermaLib static lib + public headers
+  # Vendored SDK
   s.vendored_libraries = "ios/ThermaLib/libThermaLib.a"
-  s.preserve_paths     = "ios/ThermaLib/include/**/*"
+
+  # Expose headers; let CocoaPods generate the module named "ThermaLib"
+  s.public_header_files = "ios/ThermaLib/include/ThermaLib/*.h"
+  s.header_mappings_dir = "ios/ThermaLib/include"
+  s.module_name         = "ThermaLib"
+
+  # One-shot assignment (no `.merge`)
   s.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/ios/ThermaLib/include"',
-    'OTHER_LDFLAGS'       => '$(inherited) -ObjC'
+    'DEFINES_MODULE' => 'YES',
+    'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+    'OTHER_LDFLAGS' => '$(inherited) -ObjC -lc++'
   }
-  s.libraries = "c++"
-  s.frameworks = ["CoreBluetooth"]
+
+  s.frameworks = ['CoreBluetooth']
 end

@@ -7,7 +7,7 @@
   "scripts": {
     "adb:connect": "adb reverse tcp:8081 tcp:5555",
     "analyze": "size-limit --why",
-    "android:build": "npm run prepare && npm run prepub && cd example && npm run prebuild:debug && npm run android --debug",
+    "android:build": "npm run prepare && npm run prepub && cd example && npm i && npm run prebuild:debug && npm run android --debug",
     "android": "expo run:android",
     "build:watch": "expo-module build --watch",
     "build": "expo-module build",
