@@ -13,33 +13,23 @@ Pod::Spec.new do |s|
   # When publishing, you can switch to a git source with tags.
   s.source       = { :path => "." }
 
-  s.platform     = :ios, "13.0"
+  s.platform      = :ios, "13.0"
   s.swift_version = "5.0"
 
-  # Expo Modules native sources
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  # ⚠️ Only your Expo module sources, not Pods
+  s.source_files  = "ios/**/*.{swift}"
+  s.exclude_files = "ios/Pods/**/*", "ios/build/**/*"
 
-  # Expo Modules Core dependency
+  # Expo module runtime
   s.dependency "ExpoModulesCore"
 
-  # ---- Link the prebuilt ThermaLib static library ----
-  # Keep the .a and headers inside your package at:
-  # ios/ThermaLib/libThermaLib.a
-  # ios/ThermaLib/include/ThermaLib/*.h
+  # Vendored ThermaLib static lib + public headers
   s.vendored_libraries = "ios/ThermaLib/libThermaLib.a"
   s.preserve_paths     = "ios/ThermaLib/include/**/*"
-
-  # Ensure headers are visible to your Swift/ObjC code
   s.pod_target_xcconfig = {
-    # Allow umbrella includes like <ThermaLib/ThermaLib.h>
-    "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/ios/ThermaLib/include\"",
-    # ObjC categories from static libs
-    "OTHER_LDFLAGS" => "$(inherited) -ObjC"
+    'HEADER_SEARCH_PATHS' => '"$(PODS_TARGET_SRCROOT)/ios/ThermaLib/include"',
+    'OTHER_LDFLAGS'       => '$(inherited) -ObjC'
   }
-
-  # libc++ for C++ symbols in the vendor .a
   s.libraries = "c++"
-
-  # Apple frameworks required by ThermaLib
   s.frameworks = ["CoreBluetooth"]
 end
