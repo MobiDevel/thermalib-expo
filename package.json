@@ -31,6 +31,7 @@
     "test:dev": "jest -u --maxWorkers=25% --forceExit",
     "test:watch": "jest -u --watchAll --maxWorkers=25%",
     "ts": "tsc -p ./tsconfig.json",
+    "version:next": "npm version patch",
     "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run prepare"
   },
   "keywords": [
