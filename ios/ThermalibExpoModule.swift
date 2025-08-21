@@ -18,7 +18,7 @@ public class ThermalibExpoModule: Module {
   public func definition() -> ModuleDefinition {
     Name("ThermalibExpo")
 
-    // Events JS can subscribe to
+    // Events JS can subscribe to (must match JS listener)
     Events("onChange")
 
     OnStartObserving {
@@ -56,6 +56,7 @@ public class ThermalibExpoModule: Module {
 
     // Start a BLE scan
     AsyncFunction("startScanning") { () -> Void in
+      self.emit("BT available: \(TL.isBluetoothAvailable())")
       if !TL.isBluetoothAvailable() {
         self.emit("No bluetooth!")
         return
@@ -75,28 +76,51 @@ public class ThermalibExpoModule: Module {
 
     // Connect/find device by id (sync)
     Function("readDevice") { (deviceId: String) -> [String: Any] in
+      var result: [String: Any] = [:]
       self.refreshDeviceList()
       guard let dev = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
         self.emit("Found no match for \(deviceId)")
-        return [:]
+        return result
       }
       TL.connect(to: dev)
-      return ["device": self.convertDevice(dev)]
+      result["device"] = self.convertDevice(dev)
+      return result
     }
 
     // Read temperature from first sensor (sync)
     Function("readTemperature") { (deviceId: String) -> [String: Any] in
-      guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
-        self.emit("Found no match for \(deviceId)")
-        return [:]
+      var result: [String: Any] = [:]
+      if Thread.isMainThread {
+        guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
+          self.emit("Found no match for \(deviceId)")
+          return result
+        }
+        guard let first = device.sensors.first else {
+          self.emit("Found no sensors on device \(deviceId)")
+          return result
+        }
+        let reading = first.reading
+        self.emit("Read device. Value: \(reading)")
+        result["reading"] = reading
+        return result
+      } else {
+        // Run on main thread synchronously (Expo may call from background)
+        var tempResult: [String: Any] = [:]
+        DispatchQueue.main.sync {
+          guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
+            self.emit("Found no match for \(deviceId)")
+            return
+          }
+          guard let first = device.sensors.first else {
+            self.emit("Found no sensors on device \(deviceId)")
+            return
+          }
+          let reading = first.reading
+          self.emit("Read device. Value: \(reading)")
+          tempResult["reading"] = reading
+        }
+        return tempResult
       }
-      guard let first = device.sensors.first else {
-        self.emit("Found no sensors on device \(deviceId)")
-        return [:]
-      }
-      let reading = first.reading
-      self.emit("Read device. Value: \(reading)")
-      return ["reading": reading]
     }
   }
 
@@ -123,7 +147,7 @@ public class ThermalibExpoModule: Module {
 
   private func emit(_ msg: String) {
     guard hasListeners else { return }
-    sendEvent("onMessageChanged", ["message": msg])
+    sendEvent("onChange", ["message": msg])
   }
 
   @objc private func scanCompleted(_ notification: Notification) {
