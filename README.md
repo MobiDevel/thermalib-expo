@@ -142,9 +142,9 @@ import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermali
 export default function App() {
   const [reading, setReading] = useState<number | undefined>(undefined);
 
-  const getTemperature = (deviceId: string) => {
+  const getTemperature = async (deviceId: string) => {
     console.log("Scan device", deviceId);
-    const read = thermalib.readTemperature(deviceId) as {
+    const read = (await thermalib.readTemperature(deviceId)) as {
       reading?: number;
     };
     setReading(read.reading);

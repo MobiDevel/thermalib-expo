@@ -23,7 +23,7 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
    * Assumes that the device is connected.
    * @param deviceId ID of the device {@link Device.identifier}
    */
-  readTemperature(deviceId: string): Object;
+  readTemperature(deviceId: string): Promise<Object>;
 }
 
 // This call loads the native module object from the JSI.

@@ -87,10 +87,10 @@ public class ThermalibExpoModule: Module {
       return result
     }
 
-    // Read temperature from first sensor (sync)
-    Function("readTemperature") { (deviceId: String) -> [String: Any] in
-      var result: [String: Any] = [:]
-      if Thread.isMainThread {
+    // Read temperature from first sensor (async on main thread)
+    AsyncFunction("readTemperature") { (deviceId: String) -> [String: Any] in
+      return try await MainActor.run {
+        var result: [String: Any] = [:]
         guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
           self.emit("Found no match for \(deviceId)")
           return result
@@ -103,23 +103,6 @@ public class ThermalibExpoModule: Module {
         self.emit("Read device. Value: \(reading)")
         result["reading"] = reading
         return result
-      } else {
-        // Run on main thread synchronously (Expo may call from background)
-        var tempResult: [String: Any] = [:]
-        DispatchQueue.main.sync {
-          guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
-            self.emit("Found no match for \(deviceId)")
-            return
-          }
-          guard let first = device.sensors.first else {
-            self.emit("Found no sensors on device \(deviceId)")
-            return
-          }
-          let reading = first.reading
-          self.emit("Read device. Value: \(reading)")
-          tempResult["reading"] = reading
-        }
-        return tempResult
       }
     }
   }
