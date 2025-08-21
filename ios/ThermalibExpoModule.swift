@@ -7,7 +7,6 @@
 
 import Foundation
 import ExpoModulesCore
-import ThermaLib
 
 // Reuse the SDK singleton lazily
 private let TL = ThermaLib.sharedInstance()!

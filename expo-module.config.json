@@ -1,11 +1,23 @@
 {
   "name": "@mobione/thermalib-expo",
-  "platforms": ["ios", "android"],
-  "modules": ["ThermalibExpoModule"],
+  "platforms": [
+    "apple",
+    "android"
+  ],
+  "apple": {
+    "modules": [
+      "ThermalibExpoModule"
+    ]
+  },
   "android": {
     "gradleAarProjects": [
-      { "name": "thermalib-aar", "aarFilePath": "android/libs/thermalib.aar" }
+      {
+        "name": "thermalib-aar",
+        "aarFilePath": "android/libs/thermalib.aar"
+      }
     ],
-    "modules": ["expo.modules.thermalibexpo.ThermalibExpoModule"]
+    "modules": [
+      "expo.modules.thermalibexpo.ThermalibExpoModule"
+    ]
   }
 }
