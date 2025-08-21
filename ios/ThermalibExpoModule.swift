@@ -87,6 +87,26 @@ public class ThermalibExpoModule: Module {
       return result
     }
 
+    // Explicitly connect to a device
+    AsyncFunction("connectDevice") { (deviceId: String) -> String in
+      self.refreshDeviceList()
+      guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
+        let msg = "connectDevice: No device found for id \(deviceId)"
+        self.emit(msg)
+        return msg
+      }
+      do {
+        TL.connect(to: device)
+        let msg = "connectDevice: Successfully connected to device \(deviceId)"
+        self.emit(msg)
+        return msg
+      } catch {
+        let msg = "connectDevice: Failed to connect to device \(deviceId)"
+        self.emit(msg)
+        return msg
+      }
+    }
+
     // Read temperature from first sensor (async on main thread)
     AsyncFunction("readTemperature") { (deviceId: String) -> [String: Any] in
       return await MainActor.run {
@@ -102,14 +122,20 @@ public class ThermalibExpoModule: Module {
           result["error"] = msg
           return result
         }
+
         // Check connection state if available
-        if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int, state != 2 {
-          // 2 = connected for most BLE SDKs, adjust if needed
-          let msg = "readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh"
-          self.emit(msg)
-          result["error"] = msg
-          return result
+        if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int {
+          self.emit("readTemperature: Device \(deviceId) connection state = \(state)")
+          if state != 2 && state != 3 { // Treat state=3 as valid
+            let msg = "readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh"
+            self.emit(msg)
+            result["error"] = msg
+            return result
+          }
+        } else {
+          self.emit("readTemperature: Unable to determine connection state for device \(deviceId)")
         }
+
         guard let sensors = device.sensors, sensors.count > 0 else {
           let msg = "readTemperature: No sensors found on device \(deviceId)"
           self.emit(msg)
@@ -141,6 +167,10 @@ public class ThermalibExpoModule: Module {
   private func refreshDeviceList() {
     if let list = TL.deviceList() {
       deviceList = list
+      for device in deviceList {
+        let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
+        self.emit("refreshDeviceList: Device \(device.deviceIdentifier ?? "unknown") state = \(state)")
+      }
     }
   }
 
@@ -177,7 +207,17 @@ public class ThermalibExpoModule: Module {
 
   @objc private func deviceUpdated(_ notification: Notification) {
     if let device = notification.object as? TLDevice {
-      emit("Device \(device.deviceIdentifier ?? "") updated")
+      let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
+      let identifier = device.deviceIdentifier ?? "unknown"
+      let msg = "Device \(identifier) updated with state \(state)"
+      emit(msg)
+      if state == 2 { // Assuming 2 means connected
+        emit("Device \(identifier) is ready")
+      } else {
+        emit("Device \(identifier) not ready, state: \(state)")
+      }
+    } else {
+      emit("deviceUpdated: Notification object is not a TLDevice")
     }
   }
 }

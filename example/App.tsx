@@ -48,25 +48,40 @@ export default function App() {
     }
   };
 
-  const selectDevice = (deviceId: string) => {
+  const selectDevice = async (deviceId: string) => {
+    console.log('Selecting device:', deviceId);
     const dev = thermalib.readDevice(deviceId) as {device?: Device};
     if (dev?.device?.deviceName) {
       setSelectedDev(dev.device);
       setDeviceReady(false);
       lastDeviceIdRef.current = deviceId;
+
+      // Explicitly connect to the device
+      try {
+        console.log('Attempting to connect to device:', deviceId);
+        await thermalib.connectDevice(deviceId);
+        console.log('Device connected:', deviceId);
+      } catch (error) {
+        console.error('Failed to connect to device:', error);
+      }
+    } else {
+      console.warn('Device not found or invalid:', deviceId);
     }
   };
 
   const getTemperature = async (deviceId: string) => {
-    console.log('Scan device', deviceId);
+    console.log('Getting temperature for device:', deviceId);
     try {
       (thermalib as any).initThermaLib?.();
       const read = (await thermalib.readTemperature(deviceId)) as {
         reading?: number;
         error?: string;
       };
+
       if (read.error) {
         console.warn('Temperature error:', read.error);
+      } else {
+        console.log('Temperature reading:', read.reading);
       }
       setReading(read.reading);
     } catch (e) {
@@ -89,6 +104,11 @@ export default function App() {
       ) {
         console.log('Device is ready:', selectedDev.identifier);
         setDeviceReady(true);
+      } else {
+        console.log(
+          'Device not ready or event payload mismatch:',
+          onChangePayload.value,
+        );
       }
     }
   }, [onChangePayload, selectedDev]);
@@ -116,7 +136,6 @@ export default function App() {
             onPress={async () =>
               await getTemperature(selectedDev?.identifier || '')
             }
-            disabled={!deviceReady}
           />
           {reading && (
             <View style={styles.temperatureView}>
@@ -124,6 +143,7 @@ export default function App() {
             </View>
           )}
         </Group>
+
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
         </Group>
