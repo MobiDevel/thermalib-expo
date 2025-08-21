@@ -52,10 +52,20 @@ export default function App() {
     }
   };
 
-  const getTemperature = (deviceId: string) => {
+  const getTemperature = async (deviceId: string) => {
     console.log('Scan device', deviceId);
-    const read = thermalib.readTemperature(deviceId) as {reading?: number};
-    setReading(read.reading);
+    try {
+      const read = (await thermalib.readTemperature(deviceId)) as {
+        reading?: number;
+        error?: string;
+      };
+      if (read.error) {
+        console.warn('Temperature error:', read.error);
+      }
+      setReading(read.reading);
+    } catch (e) {
+      console.error('Native error in readTemperature:', e);
+    }
   };
 
   useEffect(() => {
@@ -82,7 +92,9 @@ export default function App() {
           <Button title="devices" onPress={getDevices} />
           <Button
             title="Get temperature"
-            onPress={() => getTemperature(selectedDev?.identifier || '')}
+            onPress={async () =>
+              await getTemperature(selectedDev?.identifier || '')
+            }
           />
           {reading && (
             <View style={styles.temperatureView}>

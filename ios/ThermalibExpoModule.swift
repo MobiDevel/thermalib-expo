@@ -89,17 +89,44 @@ public class ThermalibExpoModule: Module {
 
     // Read temperature from first sensor (async on main thread)
     AsyncFunction("readTemperature") { (deviceId: String) -> [String: Any] in
-      return try await MainActor.run {
+      return await MainActor.run {
         var result: [String: Any] = [:]
+        let msg = "readTemperature: try to read device id \(deviceId)"
+        self.emit(msg)
+        
         guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
-          self.emit("Found no match for \(deviceId)")
+          let msg = "readTemperature: No device found for id \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
           return result
         }
-        guard let first = device.sensors.first else {
-          self.emit("Found no sensors on device \(deviceId)")
+        // Check connection state if available
+        if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int, state != 2 {
+          // 2 = connected for most BLE SDKs, adjust if needed
+          let msg = "readTemperature: Device \(deviceId) not connected (state=\(state))"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+        guard let sensors = device.sensors, sensors.count > 0 else {
+          let msg = "readTemperature: No sensors found on device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+        guard let first = sensors.first else {
+          let msg = "readTemperature: Sensors array empty for device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
           return result
         }
         let reading = first.reading
+        if let floatReading = reading as? Float, floatReading.isNaN {
+          let msg = "readTemperature: Sensor reading is NaN for device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
         self.emit("Read device. Value: \(reading)")
         result["reading"] = reading
         return result
