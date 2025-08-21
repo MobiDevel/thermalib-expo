@@ -1,4 +1,5 @@
 {
+  "slug": "thermalibexpo",
   "android": {
     "package": "com.thagstrom.thermalibexpo"
   },

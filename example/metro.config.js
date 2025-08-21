@@ -18,8 +18,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(__dirname, '../node_modules'),
 ];
 
+// map the scoped package to the parent folder
 config.resolver.extraNodeModules = {
-  'thermalib-expo': '..',
+  '@mobione/thermalib-expo': '..',
 };
 
 config.watchFolders = [path.resolve(__dirname, '..')];

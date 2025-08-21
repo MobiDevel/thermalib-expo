@@ -102,12 +102,12 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
       }
     }
 
-    Function("readTemperature") { deviceId: String? ->
+    AsyncFunction("readTemperature") { deviceId: String? ->
       if(deviceId == null){
           throw UnexpectedException("Specify device id")
       }
 
-      return@Function readTemperature(deviceId)
+      return@AsyncFunction readTemperature(deviceId)
     }
 
     Function("readDevice") { deviceId: String? ->

@@ -67,7 +67,7 @@ Screenshot is from the included [example](./example/App.tsx).
 When you call upon any function like `startScanning`, it is still imperative that you **request bluetooth permissions** first. The module includes a standard helper to achieve this.
 
 ```typescript
-import { requestBluetoothPermission } from "@mobioone/thermalib-expo";
+import { requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 await requestBluetoothPermission();
 ```
@@ -75,7 +75,7 @@ await requestBluetoothPermission();
 # Scanning for devices
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
+import thermalib, { Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
@@ -94,7 +94,7 @@ export default function App() {
 ## Get available devices
 
 ```typescript
-import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 export default function App() {
   const [devices, setDevices] = useState<Device[]>([]);
 
@@ -115,7 +115,7 @@ export default function App() {
 ## Connect to device
 
 ```typescript
-import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
@@ -137,14 +137,14 @@ export default function App() {
 ## Read temperature
 
 ```typescript
-import { thermalib, Device, requestBluetoothPermission } from "@mobioone/thermalib-expo";
+import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
   const [reading, setReading] = useState<number | undefined>(undefined);
 
-  const getTemperature = (deviceId: string) => {
+  const getTemperature = async (deviceId: string) => {
     console.log("Scan device", deviceId);
-    const read = thermalib.readTemperature(deviceId) as {
+    const read = (await thermalib.readTemperature(deviceId)) as {
       reading?: number;
     };
     setReading(read.reading);

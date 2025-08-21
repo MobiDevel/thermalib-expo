@@ -4,31 +4,31 @@
   "main": "index.ts",
   "scripts": {
     "adb:connect": "adb reverse tcp:8081 tcp:5555",
-    "start": "expo start --dev-client",
+    "start": "expo start --dev-client -c",
     "start:prod": "expo start --no-dev",
     "android": "expo run:android",
     "android:release": "expo run:android --variant release",
-    "ios": "npm run prebuild && expo run:ios",
+    "expo:fix": "npx expo install --check && npx expo install --fix",
+    "ios": "npm run prebuild && npm run pods && expo run:ios --device",
     "web": "expo start --web",
-    "prebuild": "npx expo prebuild",
-    "prebuild:debug": "EXPO_DEBUG=1 npx expo prebuild",
-    "prebuild:clean": "npx expo prebuild --clean",
     "pods": "npx pod-install",
+    "prebuild": "npm i && npx expo prebuild",
+    "prebuild:debug": "EXPO_DEBUG=1 npx expo prebuild",
+    "prebuild:clean": "npm i && npx expo prebuild --clean",
     "build": "rm -rf android && rm -rf ios && npm run prebuild:clean"
   },
   "dependencies": {
-    "expo": "^52.0.23",
-    "react": "18.3.1",
-    "react-native": "^0.76.5",
-    "thermalib-expo": "../",
-    "expo-location": "~18.0.5"
+    "expo": "^53.0.20",
+    "expo-location": "~18.1.6",
+    "react": "19.0.0",
+    "react-native": "0.79.5",
+    "@mobione/thermalib-expo": "../"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@react-native/typescript-config": "^0.76.5",
-    "@types/react": "~18.3.1",
-    "eslint": "^8.19.0",
-    "typescript": "^5.7.2"
+    "@types/react": "~19.0.10",
+    "eslint": "^8.57.1",
+    "typescript": "~5.8.3"
   },
   "private": true,
   "expo": {

@@ -1,35 +1,223 @@
+//
+//  ThermalibExpoModule.swift
+//  ThermalibExpo
+//
+//  Created by Thomas Hagström on 2025-08-20.
+//
+
+import Foundation
 import ExpoModulesCore
 
+// Reuse the SDK singleton lazily
+private let TL = ThermaLib.sharedInstance()!
+
 public class ThermalibExpoModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  private var hasListeners = false
+  private var deviceList: [any TLDevice] = []
+
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ThermalibExpo')` in JavaScript.
     Name("ThermalibExpo")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
-
-    // Defines event names that the module can send to JavaScript.
+    // Events JS can subscribe to (must match JS listener)
     Events("onChange")
 
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
+    OnStartObserving {
+      self.hasListeners = true
+    }
+    OnStopObserving {
+      self.hasListeners = false
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
+    // ---- JS API ----
+
+    // Kick off SDK config + observers (call AFTER adding the listener)
+    Function("initThermaLib") {
+      TL.setSupportedTransports([NSNumber(value: TLTransport.bluetoothLE.rawValue)])
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(self.scanCompleted(_:)),
+        name: NSNotification.Name(rawValue: ThermaLibScanCompletedNotificationName),
+        object: nil
+      )
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(self.newDeviceFound(_:)),
+        name: NSNotification.Name(rawValue: ThermaLibNewDeviceFoundNotificationName),
+        object: nil
+      )
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(self.deviceUpdated(_:)),
+        name: NSNotification.Name(rawValue: ThermaLibDeviceUpdatedNotificationName),
+        object: nil
+      )
+      self.emit("Init ThermaLib")
+    }
+
+    // Start a BLE scan
+    AsyncFunction("startScanning") { () -> Void in
+      self.emit("BT available: \(TL.isBluetoothAvailable())")
+      if !TL.isBluetoothAvailable() {
+        self.emit("No bluetooth!")
+        return
+      }
+      self.emit("Starting to scan")
+      TL.stopDeviceScan()
+      TL.removeAllDevices()
+      TL.startDeviceScan(with: .bluetoothLE, retrieveSystemConnections: true)
+    }
+
+    // Return current devices (sync)
+    Function("devices") { () -> [[String: Any]]? in
+      self.refreshDeviceList()
+      if self.deviceList.isEmpty { return nil }
+      return self.deviceList.map { self.convertDevice($0) }
+    }
+
+    // Connect/find device by id (sync)
+    Function("readDevice") { (deviceId: String) -> [String: Any] in
+      var result: [String: Any] = [:]
+      self.refreshDeviceList()
+      guard let dev = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
+        self.emit("Found no match for \(deviceId)")
+        return result
+      }
+      TL.connect(to: dev)
+      result["device"] = self.convertDevice(dev)
+      return result
+    }
+
+    // Explicitly connect to a device
+    AsyncFunction("connectDevice") { (deviceId: String) -> String in
+      self.refreshDeviceList()
+      guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
+        let msg = "connectDevice: No device found for id \(deviceId)"
+        self.emit(msg)
+        return msg
+      }
+      do {
+        TL.connect(to: device)
+        let msg = "connectDevice: Successfully connected to device \(deviceId)"
+        self.emit(msg)
+        return msg
+      } catch {
+        let msg = "connectDevice: Failed to connect to device \(deviceId)"
+        self.emit(msg)
+        return msg
+      }
+    }
+
+    // Read temperature from first sensor (async on main thread)
+    AsyncFunction("readTemperature") { (deviceId: String) -> [String: Any] in
+      return await MainActor.run {
+        var result: [String: Any] = [:]
+        let msg = "readTemperature: try to read device id \(deviceId)"
+        self.emit(msg)
+
+        // Refresh device list to get latest state
+        self.refreshDeviceList()
+        guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
+          let msg = "readTemperature: No device found for id \(deviceId) after refresh"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+
+        // Check connection state if available
+        if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int {
+          self.emit("readTemperature: Device \(deviceId) connection state = \(state)")
+          if state != 2 && state != 3 { // Treat state=3 as valid
+            let msg = "readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh"
+            self.emit(msg)
+            result["error"] = msg
+            return result
+          }
+        } else {
+          self.emit("readTemperature: Unable to determine connection state for device \(deviceId)")
+        }
+
+        guard let sensors = device.sensors, sensors.count > 0 else {
+          let msg = "readTemperature: No sensors found on device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+        guard let first = sensors.first else {
+          let msg = "readTemperature: Sensors array empty for device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+        let reading = first.reading
+        if let floatReading = reading as? Float, floatReading.isNaN {
+          let msg = "readTemperature: Sensor reading is NaN for device \(deviceId)"
+          self.emit(msg)
+          result["error"] = msg
+          return result
+        }
+        self.emit("Read device. Value: \(reading)")
+        result["reading"] = reading
+        return result
+      }
+    }
+  }
+
+  // ---- Helpers / Notifications ----
+
+  private func refreshDeviceList() {
+    if let list = TL.deviceList() {
+      deviceList = list
+      for device in deviceList {
+        let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
+        self.emit("refreshDeviceList: Device \(device.deviceIdentifier ?? "unknown") state = \(state)")
+      }
+    }
+  }
+
+  private func convertDevice(_ dev: TLDevice) -> [String: Any] {
+    var map: [String: Any] = [:]
+    map["identifier"] = dev.deviceIdentifier ?? ""
+    map["deviceName"] = dev.deviceName ?? ""
+    map["connectionState"] = "\(dev.connectionState)"
+    map["modelNumber"] = dev.modelNumber ?? ""
+    map["manufacturerName"] = dev.manufacturerName ?? ""
+    map["batteryLevel"] = dev.batteryLevel
+    map["description"] = dev.description
+    map["deviceType"] = dev.deviceTypeName ?? ""
+    return map
+  }
+
+  private func emit(_ msg: String) {
+    guard hasListeners else { return }
+    sendEvent("onChange", ["message": msg])
+  }
+
+  @objc private func scanCompleted(_ notification: Notification) {
+    let count = TL.deviceList().count
+    emit("\(count) found in scan")
+    refreshDeviceList()
+  }
+
+  @objc private func newDeviceFound(_ notification: Notification) {
+    if let device = notification.object as? TLDevice {
+      emit("New device found: \(device.deviceName ?? "")")
+      refreshDeviceList()
+    }
+  }
+
+  @objc private func deviceUpdated(_ notification: Notification) {
+    if let device = notification.object as? TLDevice {
+      let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
+      let identifier = device.deviceIdentifier ?? "unknown"
+      let msg = "Device \(identifier) updated with state \(state)"
+      emit(msg)
+      if state == 2 { // Assuming 2 means connected
+        emit("Device \(identifier) is ready")
+      } else {
+        emit("Device \(identifier) not ready, state: \(state)")
+      }
+    } else {
+      emit("deviceUpdated: Notification object is not a TLDevice")
     }
   }
 }

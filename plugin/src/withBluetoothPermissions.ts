@@ -12,6 +12,11 @@ export const withBluetoothPermissions: ConfigPlugin<{
         bluetoothAlwaysPermission ||
         config.modResults.NSBluetoothAlwaysUsageDescription ||
         BLUETOOTH_ALWAYS;
+
+      config.modResults.NSBluetoothPeripheralUsageDescription =
+        bluetoothAlwaysPermission ||
+        config.modResults.NSBluetoothPeripheralUsageDescription ||
+        BLUETOOTH_ALWAYS;
     }
     return config;
   });

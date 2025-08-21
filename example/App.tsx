@@ -1,5 +1,14 @@
-import {useEvent} from 'expo';
-import thermalib, {Device, requestBluetoothPermission} from 'thermalib-expo';
+import {useEvent} from 'expo'; // App.tsx
+import {requireOptionalNativeModule} from 'expo-modules-core';
+console.log(
+  'Has ThermalibExpo?',
+  !!requireOptionalNativeModule('ThermalibExpo'),
+);
+import thermalib, {
+  Device,
+  requestBluetoothPermission,
+} from '@mobione/thermalib-expo';
+
 import {
   Button,
   FlatList,
@@ -11,14 +20,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState} from 'react';
-import {useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, 'onChange');
   const [devices, setDevices] = useState<Device[]>([]);
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
   const [reading, setReading] = useState<number | undefined>(undefined);
+  const [deviceReady, setDeviceReady] = useState(false);
+  const lastDeviceIdRef = useRef<string | undefined>(undefined);
 
   const startScanning = async () => {
     await requestBluetoothPermission();
@@ -28,7 +38,9 @@ export default function App() {
 
   const getDevices = async () => {
     await requestBluetoothPermission();
+    (thermalib as any).initThermaLib?.();
     const devs = thermalib?.devices();
+    console.log('Devices discovered:', devs);
     if (devs) {
       setDevices(devs.map((d) => d as Device));
     } else {
@@ -36,20 +48,70 @@ export default function App() {
     }
   };
 
-  const selectDevice = (deviceId: string) => {
+  const selectDevice = async (deviceId: string) => {
+    console.log('Selecting device:', deviceId);
     const dev = thermalib.readDevice(deviceId) as {device?: Device};
     if (dev?.device?.deviceName) {
       setSelectedDev(dev.device);
+      setDeviceReady(false);
+      lastDeviceIdRef.current = deviceId;
+
+      // Explicitly connect to the device
+      try {
+        console.log('Attempting to connect to device:', deviceId);
+        await thermalib.connectDevice(deviceId);
+        console.log('Device connected:', deviceId);
+      } catch (error) {
+        console.error('Failed to connect to device:', error);
+      }
+    } else {
+      console.warn('Device not found or invalid:', deviceId);
     }
   };
 
-  const getTemperature = (deviceId: string) => {
-    console.log('Scan device', deviceId);
-    const read = thermalib.readTemperature(deviceId) as {
-      reading?: number;
-    };
-    setReading(read.reading);
+  const getTemperature = async (deviceId: string) => {
+    console.log('Getting temperature for device:', deviceId);
+    try {
+      (thermalib as any).initThermaLib?.();
+      const read = (await thermalib.readTemperature(deviceId)) as {
+        reading?: number;
+        error?: string;
+      };
+
+      if (read.error) {
+        console.warn('Temperature error:', read.error);
+      } else {
+        console.log('Temperature reading:', read.reading);
+      }
+      setReading(read.reading);
+    } catch (e) {
+      console.error('Native error in readTemperature:', e);
+    }
   };
+
+  useEffect(() => {
+    (thermalib as any).initThermaLib?.();
+  }, []);
+
+  // Listen for deviceUpdated event via onChangePayload
+  useEffect(() => {
+    if (onChangePayload?.value) {
+      console.log('Device updated event payload:', onChangePayload.value);
+      if (
+        selectedDev?.identifier &&
+        onChangePayload.value.includes(selectedDev.identifier) &&
+        onChangePayload.value.includes('updated')
+      ) {
+        console.log('Device is ready:', selectedDev.identifier);
+        setDeviceReady(true);
+      } else {
+        console.log(
+          'Device not ready or event payload mismatch:',
+          onChangePayload.value,
+        );
+      }
+    }
+  }, [onChangePayload, selectedDev]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -71,7 +133,9 @@ export default function App() {
           <Button title="devices" onPress={getDevices} />
           <Button
             title="Get temperature"
-            onPress={() => getTemperature(selectedDev?.identifier || '')}
+            onPress={async () =>
+              await getTemperature(selectedDev?.identifier || '')
+            }
           />
           {reading && (
             <View style={styles.temperatureView}>
@@ -79,6 +143,7 @@ export default function App() {
             </View>
           )}
         </Group>
+
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
         </Group>
@@ -119,15 +184,8 @@ function Group(props: {name: string; children: React.ReactNode}) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    fontSize: 17,
-    textAlign: 'center',
-    alignSelf: 'center',
-  },
-  groupHeader: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
+  header: {fontSize: 17, textAlign: 'center', alignSelf: 'center'},
+  groupHeader: {fontSize: 20, marginBottom: 20},
   group: {
     margin: 20,
     backgroundColor: '#fff',
@@ -135,26 +193,11 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
   },
-  container: {
-    flex: 1,
-    backgroundColor: '#eee',
-  },
-  logo: {
-    width: '100%',
-    alignSelf: 'center',
-    height: 50,
-  },
-  view: {
-    flex: 1,
-    height: 200,
-  },
-  deviceList: {
-    minHeight: 80,
-    gap: 5,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  container: {flex: 1, backgroundColor: '#eee'},
+  logo: {width: '100%', alignSelf: 'center', height: 50},
+  view: {flex: 1, height: 200},
+  deviceList: {minHeight: 80, gap: 5},
+  highlight: {fontWeight: '700'},
   btnContainer: {
     gap: 10,
     flexDirection: 'column',
@@ -162,14 +205,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
   },
-  device: {
-    fontWeight: 500,
-    fontStyle: 'italic',
-  },
-  instructions: {
-    flexShrink: 1,
-    maxHeight: 500,
-  },
+  device: {fontWeight: 500, fontStyle: 'italic'},
+  instructions: {flexShrink: 1, maxHeight: 500},
   deviceView: {
     minHeight: 15,
     marginVertical: 5,
@@ -188,9 +225,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#981435',
     padding: 6,
   },
-  temperatureText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
+  temperatureText: {color: 'white', fontWeight: 'bold', fontSize: 20},
 });
