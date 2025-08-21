@@ -93,9 +93,11 @@ public class ThermalibExpoModule: Module {
         var result: [String: Any] = [:]
         let msg = "readTemperature: try to read device id \(deviceId)"
         self.emit(msg)
-        
-        guard let device = TL.device(withIdentifier: deviceId, transport: .bluetoothLE) else {
-          let msg = "readTemperature: No device found for id \(deviceId)"
+
+        // Refresh device list to get latest state
+        self.refreshDeviceList()
+        guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
+          let msg = "readTemperature: No device found for id \(deviceId) after refresh"
           self.emit(msg)
           result["error"] = msg
           return result
@@ -103,7 +105,7 @@ public class ThermalibExpoModule: Module {
         // Check connection state if available
         if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int, state != 2 {
           // 2 = connected for most BLE SDKs, adjust if needed
-          let msg = "readTemperature: Device \(deviceId) not connected (state=\(state))"
+          let msg = "readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh"
           self.emit(msg)
           result["error"] = msg
           return result

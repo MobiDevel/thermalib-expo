@@ -20,14 +20,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useState} from 'react';
-import {useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, 'onChange');
   const [devices, setDevices] = useState<Device[]>([]);
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
   const [reading, setReading] = useState<number | undefined>(undefined);
+  const [deviceReady, setDeviceReady] = useState(false);
+  const lastDeviceIdRef = useRef<string | undefined>(undefined);
 
   const startScanning = async () => {
     await requestBluetoothPermission();
@@ -37,7 +38,9 @@ export default function App() {
 
   const getDevices = async () => {
     await requestBluetoothPermission();
+    (thermalib as any).initThermaLib?.();
     const devs = thermalib?.devices();
+    console.log('Devices discovered:', devs);
     if (devs) {
       setDevices(devs.map((d) => d as Device));
     } else {
@@ -49,12 +52,15 @@ export default function App() {
     const dev = thermalib.readDevice(deviceId) as {device?: Device};
     if (dev?.device?.deviceName) {
       setSelectedDev(dev.device);
+      setDeviceReady(false);
+      lastDeviceIdRef.current = deviceId;
     }
   };
 
   const getTemperature = async (deviceId: string) => {
     console.log('Scan device', deviceId);
     try {
+      (thermalib as any).initThermaLib?.();
       const read = (await thermalib.readTemperature(deviceId)) as {
         reading?: number;
         error?: string;
@@ -71,6 +77,21 @@ export default function App() {
   useEffect(() => {
     (thermalib as any).initThermaLib?.();
   }, []);
+
+  // Listen for deviceUpdated event via onChangePayload
+  useEffect(() => {
+    if (onChangePayload?.value) {
+      console.log('Device updated event payload:', onChangePayload.value);
+      if (
+        selectedDev?.identifier &&
+        onChangePayload.value.includes(selectedDev.identifier) &&
+        onChangePayload.value.includes('updated')
+      ) {
+        console.log('Device is ready:', selectedDev.identifier);
+        setDeviceReady(true);
+      }
+    }
+  }, [onChangePayload, selectedDev]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -95,6 +116,7 @@ export default function App() {
             onPress={async () =>
               await getTemperature(selectedDev?.identifier || '')
             }
+            disabled={!deviceReady}
           />
           {reading && (
             <View style={styles.temperatureView}>
