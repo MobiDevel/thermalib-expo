@@ -1,6 +1,6 @@
 {
   "name": "@mobione/thermalib-expo",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "ETI Bluetherm LE Protocol 1.1 integration",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -92,6 +92,5 @@
     "cacheDirectory": ".jest/cache",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
