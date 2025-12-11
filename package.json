@@ -34,7 +34,7 @@
     "test": "expo-module test",
     "ts": "tsc -p ./tsconfig.json",
     "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run prepare",
-    "version:next": "npm version patch"
+    "version:next": "npm run release:patch"
   },
   "keywords": [
     "react-native",

@@ -9,24 +9,30 @@ ETI Bluetherm LE Protocol 1.1 integration
 This is an integration to the thermalib SDK from the company ETI, to read temperature from their theromoter devices, e.g. Thermapen © Blue Theromoter (pictured).
 
 - [thermalib-expo](#thermalib-expo)
-- [Installation in managed Expo projects](#installation-in-managed-expo-projects)
-- [Installation in bare React Native projects](#installation-in-bare-react-native-projects)
-- [Usage](#usage)
-- [Permissions](#permissions)
-- [Scanning for devices](#scanning-for-devices)
-  - [Get available devices](#get-available-devices)
-  - [Connect to device](#connect-to-device)
-  - [Read temperature](#read-temperature)
-- [Configure for Android](#configure-for-android)
-- [Configure for iOS](#configure-for-ios)
-- [Running the Expo module example](#running-the-expo-module-example)
-  - [Build the library](#build-the-library)
-  - [Run the example project](#run-the-example-project)
-- [Contributing](#contributing)
+  * [Read more](#read-more)
+  * [Installation in managed Expo projects](#installation-in-managed-expo-projects)
+  * [Installation in bare React Native projects](#installation-in-bare-react-native-projects)
+  * [Usage](#usage)
+  * [Permissions](#permissions)
+  * [Scanning for devices](#scanning-for-devices)
+    + [Get available devices](#get-available-devices)
+    + [Connect to device](#connect-to-device)
+    + [Read temperature](#read-temperature)
+  * [Configure for Android](#configure-for-android)
+  * [Configure for iOS](#configure-for-ios)
+  * [Running the Expo module example](#running-the-expo-module-example)
+    + [Build the library](#build-the-library)
+    + [Run the example project](#run-the-example-project)
+    + [Publish a new version](#publish-a-new-version)
+  * [Contributing](#contributing)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-# Installation in managed Expo projects
+## Read more
+<!-- TOC-START -->
+<!-- TOC-END -->
+
+## Installation in managed Expo projects
 Note that you need to install [expo-location](https://docs.expo.dev/versions/latest/sdk/location/) as well to make BLE work on Android API >= 30.
 
 Make sure to [configure your app.json](https://docs.expo.dev/versions/latest/sdk/location/#configuration-in-app-config) accordingly.
@@ -52,17 +58,17 @@ Add `@mobione/thermalib-expo` to your `app.json`to include the module in Expo bu
 }
 ```
 
-# Installation in bare React Native projects
+## Installation in bare React Native projects
 
 For bare React Native projects, you must ensure that you have [installed and configured the `expo` package](https://docs.expo.dev/bare/installing-expo-modules/) before continuing.
 
-# Usage
+## Usage
 
 ![](assets/thermalib_example.jpg)
 
 Screenshot is from the included [example](./example/App.tsx).
 
-# Permissions
+## Permissions
 
 When you call upon any function like `startScanning`, it is still imperative that you **request bluetooth permissions** first. The module includes a standard helper to achieve this.
 
@@ -72,7 +78,7 @@ import { requestBluetoothPermission } from "@mobione/thermalib-expo";
 await requestBluetoothPermission();
 ```
 
-# Scanning for devices
+## Scanning for devices
 
 ```typescript
 import thermalib, { Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
@@ -91,7 +97,7 @@ export default function App() {
 
 [example/App.tsx](./example/App.tsx)
 
-## Get available devices
+### Get available devices
 
 ```typescript
 import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
@@ -112,7 +118,7 @@ export default function App() {
 }
 ```
 
-## Connect to device
+### Connect to device
 
 ```typescript
 import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
@@ -134,7 +140,7 @@ export default function App() {
 
 [example/App.tsx](./example/App.tsx)
 
-## Read temperature
+### Read temperature
 
 ```typescript
 import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
@@ -154,7 +160,7 @@ export default function App() {
 }
 ```
 
-# Configure for Android
+## Configure for Android
 
 This library depends on Bluetooth LE (low energy) and will add the required permissions to your app. For Android, the following permissions are added. Remember to still [**ask for permissions**](#permissions) before calling any BT function.
 
@@ -168,13 +174,13 @@ This library depends on Bluetooth LE (low energy) and will add the required perm
   <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
 ```
 
-# Configure for iOS
+## Configure for iOS
 
 Run `npx pod-install` after installing the npm package.
 
-# Running the Expo module example
+## Running the Expo module example
 
-## Build the library
+### Build the library
 
 ```bash
 npm run build # typescript
@@ -184,7 +190,7 @@ npm run prepub
 npm run pods
 ```
 
-## Run the example project
+### Run the example project
 
 ```bash
 cd example
@@ -198,7 +204,7 @@ For convenience, we've added a command that runs all the required steps from the
 
 `npm run android:build`
 
-## Publish a new version
+### Publish a new version
 
 1. Commit and push your feature.
 2. Up [version](https://docs.npmjs.com/about-semantic-versioning) in [`package.json`](./package.json) using the script `npm version patch`. This will tag and push to your branch.
@@ -206,6 +212,6 @@ For convenience, we've added a command that runs all the required steps from the
 4. [Draft a new Release](https://github.com/MobiDevel/thermalib-expo/releases) from that the new tag.
 5. GitHub Action builds and publishes. The package becomes available in "packages" GitHub page.
 
-# Contributing
+## Contributing
 
 Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
