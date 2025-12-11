@@ -1,3 +1,12 @@
+## [0.2.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.2.0...v0.2.1) (2025-12-11)
+
+### Features
+
+* add expo:fix script to check and install Expo dependencies ([a71bb7d](https://github.com/MobiDevel/thermalib-expo/commit/a71bb7da8c88e6d9735c43373cf9c5c6839a2052))
+
+### Bug Fixes
+
+* update @types/react and typescript versions in package.json and package-lock.json ([c87c45c](https://github.com/MobiDevel/thermalib-expo/commit/c87c45cddc4200855b086d1b2bbb85d49bb4efbc))
 ## [0.2.0](https://github.com/MobiDevel/thermalib-expo/compare/v0.1.9...v0.2.0) (2025-12-11)
 
 ### Features
