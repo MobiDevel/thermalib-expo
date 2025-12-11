@@ -132,6 +132,7 @@ export default function App() {
           <Button title="startScanning" onPress={startScanning} />
           <Button title="devices" onPress={getDevices} />
           <Button
+            disabled={!deviceReady}
             title="Get temperature"
             onPress={async () =>
               await getTemperature(selectedDev?.identifier || '')
