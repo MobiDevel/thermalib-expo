@@ -1,1 +1,1 @@
-{"root":["./src/DummyExpoConfig.ts","./src/UpdateGradle.ts","./src/index.ts","./src/withBle.ts","./src/withBleAndroidManifest.ts","./src/withBluetoothPermissions.ts","./src/withLocalBroadcastManager.ts"],"version":"5.8.3"}
+{"root":["./src/dummyexpoconfig.ts","./src/updategradle.ts","./src/index.ts","./src/withble.ts","./src/withbleandroidmanifest.ts","./src/withbluetoothpermissions.ts","./src/withlocalbroadcastmanager.ts"],"version":"5.8.3"}

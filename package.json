@@ -11,10 +11,12 @@
     "android": "expo run:android",
     "build:watch": "expo-module build --watch",
     "build": "expo-module build",
-    "clean": "npm run clean:jest && expo-module clean",
+    "changelog:generate": "conventional-changelog -p conventionalcommits -i CHANGELOG.md -s -r 0",
+    "changelog:release": "npm run changelog:generate && git add CHANGELOG.md && git commit -m 'chore: update changelog' || echo 'No changelog changes'",
     "clean:jest": "rm -rf ./.jest",
-    "ios": "expo run:ios --device",
+    "clean": "npm run clean:jest && expo-module clean",
     "ios:build": "npm run prepare && npm run prepub && npm run pods && cd example && npm run prebuild:debug && npm run ios --debug --device",
+    "ios": "expo run:ios --device",
     "lint:ci": "npm run lint:es",
     "lint:errors": "npm run ts & npm run lint:es --fix --quiet",
     "lint:es": "expo-module lint",
@@ -26,13 +28,13 @@
     "prepare": "expo-module prepare && husky",
     "prepub": "npm run prepublishOnly",
     "prepublishOnly": "expo-module prepublishOnly",
-    "test": "expo-module test",
     "test:cov": "npm run test -u --coverage --forceExit",
     "test:dev": "jest -u --maxWorkers=25% --forceExit",
     "test:watch": "jest -u --watchAll --maxWorkers=25%",
+    "test": "expo-module test",
     "ts": "tsc -p ./tsconfig.json",
-    "version:next": "npm version patch",
-    "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run prepare"
+    "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run prepare",
+    "version:next": "npm version patch"
   },
   "keywords": [
     "react-native",
@@ -57,6 +59,7 @@
     "@types/react": "~19.2.7",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
     "@typescript-eslint/parser": "^8.19.1",
+    "conventional-changelog-cli": "^5.0.0",
     "eslint": "^8.57.1",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^9.1.0",
@@ -76,8 +79,8 @@
     "typescript": "~5.8.3"
   },
   "peerDependencies": {
-    "expo-location": "*",
     "expo": "*",
+    "expo-location": "*",
     "react": "*",
     "react-native": "*"
   },
@@ -86,5 +89,6 @@
     "cacheDirectory": ".jest/cache",
     "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
   },
-  "dependencies": {}
+  "dependencies": {
+  }
 }
