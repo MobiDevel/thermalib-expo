@@ -1,0 +1,11 @@
+* text=auto eol=lf
+*.txt text
+
+# Windows project files keep CRLF
+*.vcproj text eol=crlf
+
+# Shell scripts force LF
+*.sh text eol=lf
+
+# Binary images
+*.jpg -text
