@@ -15,6 +15,7 @@
     "changelog:release": "npm run changelog:generate && git add CHANGELOG.md && git commit -m 'chore: update changelog' || echo 'No changelog changes'",
     "clean:jest": "rm -rf ./.jest",
     "clean": "npm run clean:jest && expo-module clean",
+    "expo:fix": "npx expo install --check",
     "ios:build": "npm run prepare && npm run prepub && npm run pods && cd example && npm run prebuild:debug && npm run ios --debug --device",
     "ios": "expo run:ios --device",
     "lint:ci": "npm run lint:es",
