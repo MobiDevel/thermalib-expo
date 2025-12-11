@@ -1,1 +1,0 @@
-{"root":["./src/DummyExpoConfig.ts","./src/UpdateGradle.ts","./src/index.ts","./src/withBle.ts","./src/withBleAndroidManifest.ts","./src/withBluetoothPermissions.ts","./src/withLocalBroadcastManager.ts"],"version":"5.8.3"}

@@ -1,1 +1,35 @@
-npm run verify
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🤓 Husky: starting pre-commit quality gate (thermalib-expo)"
+
+if git diff --cached --quiet; then
+	echo "ℹ️  No staged changes detected; skipping checks"
+	exit 0
+fi
+
+echo "🧪 Running tests..."
+if npm run test:dev >/dev/null 2>&1; then
+	echo "✅ Tests passed"
+else
+	echo "❌ Tests failed"
+	exit 1
+fi
+
+echo "🧹 Lint + format..."
+if npm run lint >/dev/null 2>&1; then
+	echo "✅ Lint clean"
+else
+	echo "❌ Lint errors"
+	exit 1
+fi
+
+echo "🔐 Type check (tsc)..."
+if npm run ts >/dev/null 2>&1; then
+	echo "✅ Typecheck passed"
+else
+	echo "❌ Type errors"
+	exit 1
+fi
+
+echo "🚀 Pre-commit passed for thermalib-expo"

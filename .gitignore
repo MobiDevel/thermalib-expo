@@ -61,3 +61,6 @@ junit.xml
 **/coverage/*
 test-report.html
 .jest
+
+# typescript
+*.tsbuildinfo

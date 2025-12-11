@@ -15,7 +15,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "expo.modules.thermalibexpo.example",
-      "appleTeamId": "JJ22V7NRQ8"
+      "appleTeamId": "JJ22V7NRQ8",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to connect to nearby thermometer devices.",
+        "NSBluetoothPeripheralUsageDescription": "This app needs Bluetooth to communicate with therometer devices."
+      }
     },
     "android": {
       "adaptiveIcon": {
