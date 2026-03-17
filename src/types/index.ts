@@ -12,6 +12,10 @@ export type ChangeEventPayload = {
   value: string;
 };
 
+export type TemperatureReading = {
+  reading?: number;
+};
+
 export const RSSI_UNAVAIL = Number.MIN_SAFE_INTEGER; // Integer.MIN_VALUE equivalent in JS
 
 export type Feature = {

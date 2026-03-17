@@ -3,13 +3,11 @@ package expo.modules.thermalibexpo
 import android.content.Context
 import android.util.Log
 import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.WritableArray
 import com.facebook.react.bridge.WritableMap
+import expo.modules.kotlin.exception.UnexpectedException
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import expo.modules.kotlin.exception.Exceptions
-import expo.modules.kotlin.exception.UnexpectedException
 import uk.co.etiltd.thermalib.Device
 import uk.co.etiltd.thermalib.ThermaLib
 
@@ -73,28 +71,22 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
       return@AsyncFunction startScanning()
     }
 
+    Function("initThermaLib") {
+      initializeThermaLibIfNeeded()
+    }
+
     Function("devices") {
       return@Function devices()
     }
     
-    OnCreate {        
-      sendMessage("Init ThermaLib")
-
-      TL = ThermaLib.instance(context)
-      // You can alter how ThermaLib responds to a call to a method that is not applicable to the Device/Sensor for which
-      // it has been called. See the documentation for ThermaLib.UnsupportedCallHandling
-      //
-      TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
-      sendMessage("Supported protocols: ${TL.supportedTransports}")
-      sendMessage(
-          "Register callbacks on ${TL}"
-      )
-
-      // Register ThermaLibCallbacks and pass `this` as the listener
-      TL.registerCallbacks(ThermaLibCallbacks(this@ThermalibExpoModule), TAG)
+    OnCreate {
+      initializeThermaLibIfNeeded()
     }
 
     OnDestroy{
+      if (!::TL.isInitialized) {
+        return@OnDestroy
+      }
       TL.deregisterCallbacks(context)
       val dev = currentDevice
       if(dev !== null){
@@ -110,12 +102,22 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
       return@AsyncFunction readTemperature(deviceId)
     }
 
+    AsyncFunction("connectDevice") { deviceId: String? ->
+      if(deviceId == null){
+        throw UnexpectedException("Specify device id")
+      }
+
+      connectToDevice(deviceId)
+      return@AsyncFunction
+    }
+
     Function("readDevice") { deviceId: String? ->
       return@Function readDevice(deviceId)
     }
   }
 
   private fun devices(): WritableArray? {
+    initializeThermaLibIfNeeded()
     refreshDeviceList()
     if(deviceList.isNotEmpty()){
         val result = Arguments.createArray()
@@ -129,6 +131,7 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
   }
 
   private fun readTemperature(deviceId: String?): WritableMap {
+      initializeThermaLibIfNeeded()
       val result = Arguments.createMap();
       val device = connectToDevice(deviceId) ?: return result
 
@@ -147,14 +150,15 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
   }
 
   private fun connectToDevice(deviceId: String?): Device? {
+        initializeThermaLibIfNeeded()
         if(deviceId == null){
-            sendEvent("Specify device id")
+            sendMessage("Specify device id")
             return null;
         }
 
         val foundDev:Device? = TL.getDeviceWithIdentifierAndTransport(deviceId, ThermaLib.Transport.BLUETOOTH_LE)
         if(foundDev == null){
-            sendEvent("Found no match for $deviceId")
+            sendMessage("Found no match for $deviceId")
             return null;
         }
 
@@ -168,22 +172,20 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
         return foundDev
     }
 
-  private fun readDevice(deviceId: String?): WritableMap {
-        val result = Arguments.createMap();
+  private fun readDevice(deviceId: String?): WritableMap? {
+        initializeThermaLibIfNeeded()
         if(deviceId == null){
-            sendEvent("Specify device id")
-            return result;
+            sendMessage("Specify device id")
+            return null
         }
 
         val foundDev:Device? = connectToDevice(deviceId)
         if(foundDev == null){
-            sendEvent("Found no match for $deviceId")
-            return result;
+            sendMessage("Found no match for $deviceId")
+            return null
         }
 
-        result.putMap("device", convertDeviceToWritebleMap(foundDev))
-
-        return result
+        return convertDeviceToWritebleMap(foundDev)
   }
 
   private fun convertDeviceToWritebleMap(dev: Device): WritableMap {
@@ -200,6 +202,7 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
   }
 
   private fun startScanning() {
+    initializeThermaLibIfNeeded()
     // ThermaLib: start scan for Bluetooth LE devices, with a 5-second timeout.
     // Completion will be dispatched via tlCallbacks
     val isConnected = TL.isServiceConnected(ThermaLib.Transport.BLUETOOTH_LE)
@@ -214,6 +217,20 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
 
     TL.stopScanForDevices()
     TL.startScanForDevices(ThermaLib.Transport.BLUETOOTH_LE, 20)
+  }
+
+  private fun initializeThermaLibIfNeeded() {
+    if (::TL.isInitialized) {
+      return
+    }
+
+    sendMessage("Init ThermaLib")
+
+    TL = ThermaLib.instance(context)
+    TL.unsupportedCallHandling = ThermaLib.UnsupportedCallHandling.LOG
+    sendMessage("Supported protocols: ${TL.supportedTransports}")
+    sendMessage("Register callbacks on ${TL}")
+    TL.registerCallbacks(ThermaLibCallbacks(this@ThermalibExpoModule), TAG)
   }
 }
 

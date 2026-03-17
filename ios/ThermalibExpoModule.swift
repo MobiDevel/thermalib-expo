@@ -14,6 +14,7 @@ private let TL = ThermaLib.sharedInstance()!
 public class ThermalibExpoModule: Module {
   private var hasListeners = false
   private var deviceList: [any TLDevice] = []
+  private var isInitialized = false
 
   public func definition() -> ModuleDefinition {
     Name("ThermalibExpo")
@@ -32,30 +33,12 @@ public class ThermalibExpoModule: Module {
 
     // Kick off SDK config + observers (call AFTER adding the listener)
     Function("initThermaLib") {
-      TL.setSupportedTransports([NSNumber(value: TLTransport.bluetoothLE.rawValue)])
-      NotificationCenter.default.addObserver(
-        self,
-        selector: #selector(self.scanCompleted(_:)),
-        name: NSNotification.Name(rawValue: ThermaLibScanCompletedNotificationName),
-        object: nil
-      )
-      NotificationCenter.default.addObserver(
-        self,
-        selector: #selector(self.newDeviceFound(_:)),
-        name: NSNotification.Name(rawValue: ThermaLibNewDeviceFoundNotificationName),
-        object: nil
-      )
-      NotificationCenter.default.addObserver(
-        self,
-        selector: #selector(self.deviceUpdated(_:)),
-        name: NSNotification.Name(rawValue: ThermaLibDeviceUpdatedNotificationName),
-        object: nil
-      )
-      self.emit("Init ThermaLib")
+      self.initializeThermaLibIfNeeded()
     }
 
     // Start a BLE scan
     AsyncFunction("startScanning") { () -> Void in
+      self.initializeThermaLibIfNeeded()
       self.emit("BT available: \(TL.isBluetoothAvailable())")
       if !TL.isBluetoothAvailable() {
         self.emit("No bluetooth!")
@@ -69,46 +52,40 @@ public class ThermalibExpoModule: Module {
 
     // Return current devices (sync)
     Function("devices") { () -> [[String: Any]]? in
+      self.initializeThermaLibIfNeeded()
       self.refreshDeviceList()
       if self.deviceList.isEmpty { return nil }
       return self.deviceList.map { self.convertDevice($0) }
     }
 
-    // Connect/find device by id (sync)
-    Function("readDevice") { (deviceId: String) -> [String: Any] in
-      var result: [String: Any] = [:]
+    // Return device by id and connect it if needed.
+    Function("readDevice") { (deviceId: String) -> [String: Any]? in
+      self.initializeThermaLibIfNeeded()
       self.refreshDeviceList()
       guard let dev = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
         self.emit("Found no match for \(deviceId)")
-        return result
+        return nil
       }
       TL.connect(to: dev)
-      result["device"] = self.convertDevice(dev)
-      return result
+      return self.convertDevice(dev)
     }
 
     // Explicitly connect to a device
-    AsyncFunction("connectDevice") { (deviceId: String) -> String in
+    AsyncFunction("connectDevice") { (deviceId: String) -> Void in
+      self.initializeThermaLibIfNeeded()
       self.refreshDeviceList()
       guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
-        let msg = "connectDevice: No device found for id \(deviceId)"
-        self.emit(msg)
-        return msg
+        self.emit("connectDevice: No device found for id \(deviceId)")
+        return
       }
-      do {
-        TL.connect(to: device)
-        let msg = "connectDevice: Successfully connected to device \(deviceId)"
-        self.emit(msg)
-        return msg
-      } catch {
-        let msg = "connectDevice: Failed to connect to device \(deviceId)"
-        self.emit(msg)
-        return msg
-      }
+
+      TL.connect(to: device)
+      self.emit("connectDevice: Successfully connected to device \(deviceId)")
     }
 
     // Read temperature from first sensor (async on main thread)
     AsyncFunction("readTemperature") { (deviceId: String) -> [String: Any] in
+      self.initializeThermaLibIfNeeded()
       return await MainActor.run {
         var result: [String: Any] = [:]
         let msg = "readTemperature: try to read device id \(deviceId)"
@@ -117,9 +94,7 @@ public class ThermalibExpoModule: Module {
         // Refresh device list to get latest state
         self.refreshDeviceList()
         guard let device = self.deviceList.first(where: { $0.deviceIdentifier == deviceId }) else {
-          let msg = "readTemperature: No device found for id \(deviceId) after refresh"
-          self.emit(msg)
-          result["error"] = msg
+          self.emit("readTemperature: No device found for id \(deviceId) after refresh")
           return result
         }
 
@@ -127,9 +102,7 @@ public class ThermalibExpoModule: Module {
         if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int {
           self.emit("readTemperature: Device \(deviceId) connection state = \(state)")
           if state != 2 && state != 3 { // Treat state=3 as valid
-            let msg = "readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh"
-            self.emit(msg)
-            result["error"] = msg
+            self.emit("readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh")
             return result
           }
         } else {
@@ -137,22 +110,16 @@ public class ThermalibExpoModule: Module {
         }
 
         guard let sensors = device.sensors, sensors.count > 0 else {
-          let msg = "readTemperature: No sensors found on device \(deviceId)"
-          self.emit(msg)
-          result["error"] = msg
+          self.emit("readTemperature: No sensors found on device \(deviceId)")
           return result
         }
         guard let first = sensors.first else {
-          let msg = "readTemperature: Sensors array empty for device \(deviceId)"
-          self.emit(msg)
-          result["error"] = msg
+          self.emit("readTemperature: Sensors array empty for device \(deviceId)")
           return result
         }
         let reading = first.reading
         if let floatReading = reading as? Float, floatReading.isNaN {
-          let msg = "readTemperature: Sensor reading is NaN for device \(deviceId)"
-          self.emit(msg)
-          result["error"] = msg
+          self.emit("readTemperature: Sensor reading is NaN for device \(deviceId)")
           return result
         }
         self.emit("Read device. Value: \(reading)")
@@ -189,7 +156,34 @@ public class ThermalibExpoModule: Module {
 
   private func emit(_ msg: String) {
     guard hasListeners else { return }
-    sendEvent("onChange", ["message": msg])
+    sendEvent("onChange", ["value": msg])
+  }
+
+  private func initializeThermaLibIfNeeded() {
+    if isInitialized { return }
+
+    TL.setSupportedTransports([NSNumber(value: TLTransport.bluetoothLE.rawValue)])
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.scanCompleted(_:)),
+      name: NSNotification.Name(rawValue: ThermaLibScanCompletedNotificationName),
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.newDeviceFound(_:)),
+      name: NSNotification.Name(rawValue: ThermaLibNewDeviceFoundNotificationName),
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.deviceUpdated(_:)),
+      name: NSNotification.Name(rawValue: ThermaLibDeviceUpdatedNotificationName),
+      object: nil
+    )
+
+    isInitialized = true
+    emit("Init ThermaLib")
   }
 
   @objc private func scanCompleted(_ notification: Notification) {

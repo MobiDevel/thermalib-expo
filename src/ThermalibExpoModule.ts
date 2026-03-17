@@ -1,9 +1,17 @@
 /* eslint-disable @typescript-eslint/no-wrapper-object-types */
 import {NativeModule, requireNativeModule} from 'expo';
 
-import {Device, ThermalibExpoModuleEvents} from './types';
+import {
+  Device,
+  TemperatureReading,
+  ThermalibExpoModuleEvents,
+} from './types/index';
 
 declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents> {
+  /**
+   * Initialize the ThermaLib runtime.
+   */
+  initThermaLib(): void;
   /**
    * Get the current list of devices.
    */
@@ -16,14 +24,19 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
    * Connect to the device with the given ID.
    * @param deviceId ID of the device {@link Device.identifier}
    */
-  readDevice(deviceId: string): Object;
+  connectDevice(deviceId: string): Promise<void>;
+  /**
+   * Return the device with the given ID, if found.
+   * @param deviceId ID of the device {@link Device.identifier}
+   */
+  readDevice(deviceId: string): Device | null;
   /**
    * Read temperature for given device.
    *
    * Assumes that the device is connected.
    * @param deviceId ID of the device {@link Device.identifier}
    */
-  readTemperature(deviceId: string): Promise<Object>;
+  readTemperature(deviceId: string): Promise<TemperatureReading>;
 }
 
 // This call loads the native module object from the JSI.

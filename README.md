@@ -88,6 +88,7 @@ export default function App() {
 
   const startScanning = async () => {
     await requestBluetoothPermission();
+    thermalib.initThermaLib?.();
     await thermalib?.startScanning();
     getDevices();
   };
@@ -106,6 +107,7 @@ export default function App() {
 
   const getDevices = async () => {
     await requestBluetoothPermission();
+    thermalib.initThermaLib?.();
     const devs = thermalib?.devices();
     if (devs) {
       setDevices(devs.map((d) => d as Device));
@@ -126,11 +128,12 @@ import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermali
 export default function App() {
   const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
 
-  const selectDevice = (deviceId: string) => {
+  const selectDevice = async (deviceId: string) => {
     console.log("Fetch device", deviceId);
-    const dev = thermalib.readDevice(deviceId) as { device?: Device };
-    if (dev?.device?.deviceName) {
-      setSelectedDev(dev.device);
+    const dev = thermalib.readDevice(deviceId);
+    if (dev?.deviceName) {
+      setSelectedDev(dev);
+      await thermalib.connectDevice(deviceId);
     }
   };
 
@@ -150,9 +153,8 @@ export default function App() {
 
   const getTemperature = async (deviceId: string) => {
     console.log("Scan device", deviceId);
-    const read = (await thermalib.readTemperature(deviceId)) as {
-      reading?: number;
-    };
+    thermalib.initThermaLib?.();
+    const read = await thermalib.readTemperature(deviceId);
     setReading(read.reading);
   };
 
