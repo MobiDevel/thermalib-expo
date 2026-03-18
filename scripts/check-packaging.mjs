@@ -8,8 +8,13 @@ const packOutput = execFileSync(
   },
 );
 
-const jsonStart = packOutput.lastIndexOf('[\n');
-const packJson = jsonStart >= 0 ? packOutput.slice(jsonStart) : packOutput;
+const packJsonMatch = packOutput.match(/(\[\s*\{[\s\S]*\}\s*\])\s*$/);
+
+if (!packJsonMatch) {
+  throw new Error('npm pack did not produce a parseable JSON payload.');
+}
+
+const [, packJson] = packJsonMatch;
 const packResult = JSON.parse(packJson);
 
 if (!Array.isArray(packResult) || packResult.length === 0) {

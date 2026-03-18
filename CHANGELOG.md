@@ -1,3 +1,14 @@
+## [0.3.3](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.2...v0.3.3) (2026-03-18)
+
+### Features
+
+* add packaging checks and update npm scripts for app.plugin.js CU-869ch59b7 ([3c42ba4](https://github.com/MobiDevel/thermalib-expo/commit/3c42ba4d1f199c6f5f7d00b4ab3cceb6d93d1c18))
+
+### Bug Fixes
+
+* handle edge case in npm pack output parsing CU-869ch59b7 ([b55ee52](https://github.com/MobiDevel/thermalib-expo/commit/b55ee52d97b4da8d40108bc1f2a46efe02bf5d8e))
+* improve JSON parsing for npm pack output in check-packaging script CU-869ch59b7 ([81927ae](https://github.com/MobiDevel/thermalib-expo/commit/81927aefb93a5106905ba82aba11b2c26ad88d20))
+* Potential fix for pull request finding CU-869ch59b7 ([8f1e2d2](https://github.com/MobiDevel/thermalib-expo/commit/8f1e2d24e76fc5083f122c89955dc276d61ff8e1))
 ## [0.3.2](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.1...v0.3.2) (2026-03-18)
 ## [0.3.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.0...v0.3.1) (2026-03-18)
 
