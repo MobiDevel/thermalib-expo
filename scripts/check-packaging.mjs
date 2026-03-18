@@ -8,7 +8,9 @@ const packOutput = execFileSync(
   },
 );
 
-const packResult = JSON.parse(packOutput);
+const jsonStart = packOutput.lastIndexOf('[\n');
+const packJson = jsonStart >= 0 ? packOutput.slice(jsonStart) : packOutput;
+const packResult = JSON.parse(packJson);
 
 if (!Array.isArray(packResult) || packResult.length === 0) {
   throw new Error('npm pack did not return package metadata.');
