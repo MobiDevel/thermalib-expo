@@ -1,3 +1,11 @@
+## [0.3.4](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.3...v0.3.4) (2026-03-18)
+
+### Features
+
+* add prepublish checks to npm release workflow CU-869ch59b7 ([81dc17e](https://github.com/MobiDevel/thermalib-expo/commit/81dc17ea8af91d381ed0d7c7e0c37b560debcd9a))
+* enhance npm publish workflow with error handling and changelog generation improvements CU-869ch59b7 ([180a854](https://github.com/MobiDevel/thermalib-expo/commit/180a8541d6d83449e56f2e80ada88d8a5869620f))
+* enhance release workflow and add CI verification script CU-869ch59b7 ([5fa8e4b](https://github.com/MobiDevel/thermalib-expo/commit/5fa8e4b7dd8058f6966ac8846fba8073f7cf647f))
+* ensure tag points to latest release commit in npm publish workflow CU-869ch59b7 ([50de2b0](https://github.com/MobiDevel/thermalib-expo/commit/50de2b0812450484a03aad2690a854cd0b0417fc))
 ## [0.3.3](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.2...v0.3.3) (2026-03-18)
 
 ### Features
