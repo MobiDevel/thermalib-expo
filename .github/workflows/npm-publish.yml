@@ -1,37 +1,122 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
-
-name: Node.js Package
+name: Release
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump type (patch|minor|major)
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      cu_id:
+        description: ClickUp task ID (e.g. CU-abc123)
+        required: true
+        type: string
 
 permissions:
+  contents: write
   id-token: write # Required for OIDC
-  contents: read
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: 24
-      - run: npm ci
-      - run: npm run verify
+          fetch-depth: 0
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Configure Git author
+        run: |
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+      - name: Ensure branch allowed
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          if [ "$BRANCH" != "main" ] && [ "$BRANCH" != "development" ]; then
+            echo "Releases only allowed from main or development. Current: $BRANCH" >&2
+            exit 1
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: npm
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm run prepub
-      - run: npm run pack:check
-      - run: npm publish
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Verify (ci)
+        run: npm run verify:ci
+
+      - name: Run release bump
+        env:
+          CU_ID: ${{ inputs.cu_id }}
+          HUSKY: 0
+        run: |
+          echo "Running bump: ${{ inputs.bump }} with CU_ID=${{ inputs.cu_id }}"
+          if [ "${{ inputs.bump }}" = "patch" ]; then
+            npm run version:next
+          elif [ "${{ inputs.bump }}" = "minor" ]; then
+            npm run release:minor
+          else
+            npm run release:major
+          fi
+
+      - name: Validate changelog for bumped version
+        run: node ./scripts/check-changelog.mjs
+
+      - name: Extract version
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Derive notes from CHANGELOG
+        id: notes
+        run: |
+          FILE=CHANGELOG.md
+          if [ ! -f "$FILE" ]; then
+            echo "CHANGELOG missing" >&2
+            exit 1
+          fi
+          awk -v ver="## [${{ steps.get_version.outputs.version }}]" 'BEGIN{found=0}
+            $0 ~ ver {found=1; print; next}
+            /^## \[/ && found==1 {exit}
+            found==1 {print}' "$FILE" > RELEASE_NOTES.md || true
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "Fallback to recent conventional-changelog fragment"
+            node -e "require('child_process').execSync('conventional-changelog -p conventionalcommits -r 2',{stdio:'inherit'})" > RELEASE_NOTES.md || echo "Changelog generation fallback" >> RELEASE_NOTES.md
+          fi
+          echo 'notes<<EOF' >> "$GITHUB_OUTPUT"
+          cat RELEASE_NOTES.md >> "$GITHUB_OUTPUT"
+          echo 'EOF' >> "$GITHUB_OUTPUT"
+
+      - name: Push commit and tags
+        env:
+          HUSKY: 0
+        run: |
+          git push origin HEAD:${GITHUB_REF_NAME}
+          git push --tags
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: v${{ steps.get_version.outputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to npm
+        run: npm publish
