@@ -1,3 +1,8 @@
+## [0.3.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.0...v0.3.1) (2026-03-18)
+
+### Features
+
+* update device handling to use DeviceInfo type across the application CU-869ch59b7 ([eec559a](https://github.com/MobiDevel/thermalib-expo/commit/eec559a818c47d9d423e0c903f492e0c392054d8))
 ## [0.3.0](https://github.com/MobiDevel/thermalib-expo/compare/v0.2.1...v0.3.0) (2026-03-17)
 
 ### Features
