@@ -19,7 +19,7 @@ on:
 
 permissions:
   contents: write
-  id-token: write # Required for OIDC
+  id-token: write # Required for npm trusted publishing (OIDC)
 
 jobs:
   release:
@@ -90,6 +90,7 @@ jobs:
       - name: Derive notes from CHANGELOG
         id: notes
         run: |
+          set -euo pipefail
           FILE=CHANGELOG.md
           if [ ! -f "$FILE" ]; then
             echo "CHANGELOG missing" >&2
@@ -101,7 +102,10 @@ jobs:
             found==1 {print}' "$FILE" > RELEASE_NOTES.md || true
           if [ ! -s RELEASE_NOTES.md ]; then
             echo "Fallback to recent conventional-changelog fragment"
-            node -e "require('child_process').execSync('conventional-changelog -p conventionalcommits -r 2',{stdio:'inherit'})" > RELEASE_NOTES.md || echo "Changelog generation fallback" >> RELEASE_NOTES.md
+            npx conventional-changelog -p conventionalcommits -r 2 > RELEASE_NOTES.md
+          fi
+          if [ ! -s RELEASE_NOTES.md ]; then
+            echo "Changelog generation fallback" > RELEASE_NOTES.md
           fi
           echo 'notes<<EOF' >> "$GITHUB_OUTPUT"
           cat RELEASE_NOTES.md >> "$GITHUB_OUTPUT"
@@ -131,4 +135,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to npm
-        run: npm publish
+        run: |
+          set -euo pipefail
+          npm publish --access public
