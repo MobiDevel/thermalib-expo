@@ -59,6 +59,11 @@ jobs:
       - name: Verify (ci)
         run: npm run verify:ci
 
+      - name: prepublish check
+        run: |
+          npm run prepub
+          npm run pack:check
+
       - name: Run release bump
         env:
           CU_ID: ${{ inputs.cu_id }}
