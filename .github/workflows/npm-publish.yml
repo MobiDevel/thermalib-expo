@@ -107,6 +107,13 @@ jobs:
           cat RELEASE_NOTES.md >> "$GITHUB_OUTPUT"
           echo 'EOF' >> "$GITHUB_OUTPUT"
 
+      - name: Ensure tag points to latest release commit
+        env:
+          VERSION: ${{ steps.get_version.outputs.version }}
+        run: |
+          git tag -d "v${VERSION}" 2>/dev/null || true
+          git tag "v${VERSION}"
+
       - name: Push commit and tags
         env:
           HUSKY: 0
