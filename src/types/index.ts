@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-export type {Device} from './Device';
+export type {Device, DeviceInfo} from './Device';
 export type OnLoadEventPayload = {
   url: string;
 };
@@ -10,6 +10,10 @@ export type ThermalibExpoModuleEvents = {
 
 export type ChangeEventPayload = {
   value: string;
+};
+
+export type TemperatureReading = {
+  reading?: number;
 };
 
 export const RSSI_UNAVAIL = Number.MIN_SAFE_INTEGER; // Integer.MIN_VALUE equivalent in JS

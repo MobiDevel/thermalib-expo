@@ -81,13 +81,14 @@ await requestBluetoothPermission();
 ## Scanning for devices
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
+import thermalib, { DeviceInfo, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
 
   const startScanning = async () => {
     await requestBluetoothPermission();
+    thermalib.initThermaLib?.();
     await thermalib?.startScanning();
     getDevices();
   };
@@ -102,13 +103,14 @@ export default function App() {
 ```typescript
 import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 export default function App() {
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
 
   const getDevices = async () => {
     await requestBluetoothPermission();
+    thermalib.initThermaLib?.();
     const devs = thermalib?.devices();
     if (devs) {
-      setDevices(devs.map((d) => d as Device));
+      setDevices(devs);
     } else {
       console.log("No devices");
     }
@@ -121,16 +123,17 @@ export default function App() {
 ### Connect to device
 
 ```typescript
-import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
+import { thermalib, DeviceInfo, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
-  const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
+  const [selectedDev, setSelectedDev] = useState<DeviceInfo | undefined>(undefined);
 
-  const selectDevice = (deviceId: string) => {
+  const selectDevice = async (deviceId: string) => {
     console.log("Fetch device", deviceId);
-    const dev = thermalib.readDevice(deviceId) as { device?: Device };
-    if (dev?.device?.deviceName) {
-      setSelectedDev(dev.device);
+    const dev = thermalib.readDevice(deviceId);
+    if (dev?.deviceName) {
+      setSelectedDev(dev);
+      await thermalib.connectDevice(deviceId);
     }
   };
 
@@ -150,9 +153,8 @@ export default function App() {
 
   const getTemperature = async (deviceId: string) => {
     console.log("Scan device", deviceId);
-    const read = (await thermalib.readTemperature(deviceId)) as {
-      reading?: number;
-    };
+    thermalib.initThermaLib?.();
+    const read = await thermalib.readTemperature(deviceId);
     setReading(read.reading);
   };
 
@@ -161,6 +163,8 @@ export default function App() {
 ```
 
 ## Configure for Android
+
+The `devices()` and `readDevice()` methods return a serialized `DeviceInfo` summary, not a live native SDK `Device` instance. Use `connectDevice()` and `readTemperature()` for native interactions.
 
 This library depends on Bluetooth LE (low energy) and will add the required permissions to your app. For Android, the following permissions are added. Remember to still [**ask for permissions**](#permissions) before calling any BT function.
 

@@ -3,6 +3,17 @@ import {GenericType} from './GenericType';
 import {Sensor} from './Sensor';
 import {Unit} from './Unit';
 
+export type DeviceInfo = {
+  identifier: string;
+  deviceName: string;
+  connectionState: string;
+  modelNumber: string | null;
+  manufacturerName: string | null;
+  batteryLevel: number;
+  description: string;
+  deviceType: string;
+};
+
 export type Device = {
   RSSI_UNAVAIL: number; // Integer.MIN_VALUE equivalent
 

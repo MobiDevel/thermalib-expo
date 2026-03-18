@@ -1,3 +1,17 @@
+## [0.3.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.0...v0.3.1) (2026-03-18)
+
+### Features
+
+* update device handling to use DeviceInfo type across the application CU-869ch59b7 ([eec559a](https://github.com/MobiDevel/thermalib-expo/commit/eec559a818c47d9d423e0c903f492e0c392054d8))
+## [0.3.0](https://github.com/MobiDevel/thermalib-expo/compare/v0.2.1...v0.3.0) (2026-03-17)
+
+### Features
+
+* enhance ThermaLib integration with initialization and device management improvements CU-869ch59b7 ([1d75336](https://github.com/MobiDevel/thermalib-expo/commit/1d753360baccf45a44612fa243a1289f04372559))
+
+### Bug Fixes
+
+* update eslint-plugin-prettier and prettier versions in package.json and package-lock.json ([cd22f34](https://github.com/MobiDevel/thermalib-expo/commit/cd22f34e88ef887aadc2b4f7e46ab5032005caa5))
 ## [0.2.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.2.0...v0.2.1) (2025-12-11)
 
 ### Features
