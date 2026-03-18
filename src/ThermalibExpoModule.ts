@@ -2,7 +2,7 @@
 import {NativeModule, requireNativeModule} from 'expo';
 
 import {
-  Device,
+  DeviceInfo,
   TemperatureReading,
   ThermalibExpoModuleEvents,
 } from './types/index';
@@ -15,7 +15,7 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
   /**
    * Get the current list of devices.
    */
-  devices(): Device[] | null;
+  devices(): DeviceInfo[] | null;
   /**
    * Start scanning for devices. After this is called, devices can be fetched.
    */
@@ -29,7 +29,7 @@ declare class ThermalibExpoModule extends NativeModule<ThermalibExpoModuleEvents
    * Return the device with the given ID, if found.
    * @param deviceId ID of the device {@link Device.identifier}
    */
-  readDevice(deviceId: string): Device | null;
+  readDevice(deviceId: string): DeviceInfo | null;
   /**
    * Read temperature for given device.
    *

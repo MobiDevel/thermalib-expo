@@ -81,7 +81,7 @@ await requestBluetoothPermission();
 ## Scanning for devices
 
 ```typescript
-import thermalib, { Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
+import thermalib, { DeviceInfo, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
@@ -103,14 +103,14 @@ export default function App() {
 ```typescript
 import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
 export default function App() {
-  const [devices, setDevices] = useState<Device[]>([]);
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
 
   const getDevices = async () => {
     await requestBluetoothPermission();
     thermalib.initThermaLib?.();
     const devs = thermalib?.devices();
     if (devs) {
-      setDevices(devs.map((d) => d as Device));
+      setDevices(devs);
     } else {
       console.log("No devices");
     }
@@ -123,10 +123,10 @@ export default function App() {
 ### Connect to device
 
 ```typescript
-import { thermalib, Device, requestBluetoothPermission } from "@mobione/thermalib-expo";
+import { thermalib, DeviceInfo, requestBluetoothPermission } from "@mobione/thermalib-expo";
 
 export default function App() {
-  const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
+  const [selectedDev, setSelectedDev] = useState<DeviceInfo | undefined>(undefined);
 
   const selectDevice = async (deviceId: string) => {
     console.log("Fetch device", deviceId);
@@ -163,6 +163,8 @@ export default function App() {
 ```
 
 ## Configure for Android
+
+The `devices()` and `readDevice()` methods return a serialized `DeviceInfo` summary, not a live native SDK `Device` instance. Use `connectDevice()` and `readTemperature()` for native interactions.
 
 This library depends on Bluetooth LE (low energy) and will add the required permissions to your app. For Android, the following permissions are added. Remember to still [**ask for permissions**](#permissions) before calling any BT function.
 
