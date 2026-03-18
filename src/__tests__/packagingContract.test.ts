@@ -10,6 +10,21 @@ describe('public packaging contract', () => {
     expect(source).not.toContain("export * from './types';");
   });
 
+  it('keeps the Expo app plugin available from package root and build output', () => {
+    const packageJsonPath = path.join(__dirname, '..', '..', 'package.json');
+    const packageJson = JSON.parse(
+      fs.readFileSync(packageJsonPath, 'utf8'),
+    ) as {
+      exports?: Record<string, unknown>;
+      scripts?: Record<string, string>;
+    };
+
+    expect(packageJson.exports?.['./app.plugin.js']).toBe('./app.plugin.js');
+    expect(packageJson.scripts?.['pack:check']).toBe(
+      'node ./scripts/check-packaging.mjs',
+    );
+  });
+
   it('declares the runtime methods used by the app', () => {
     const modulePath = path.join(__dirname, '..', 'ThermalibExpoModule.ts');
     const source = fs.readFileSync(modulePath, 'utf8');

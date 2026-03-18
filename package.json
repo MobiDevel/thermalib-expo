@@ -9,7 +9,8 @@
       "types": "./build/index.d.ts",
       "default": "./build/index.js"
     },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./app.plugin.js": "./app.plugin.js"
   },
   "scripts": {
     "adb:connect": "adb reverse tcp:8081 tcp:5555",
@@ -32,6 +33,7 @@
     "open:android": "open -a \"Android Studio\" example/android",
     "open:ios": "xed example/ios",
     "pods": "npx pod-install",
+    "pack:check": "node ./scripts/check-packaging.mjs",
     "prep": "npm run prepare && npm run prepub",
     "prepare": "expo-module prepare && husky",
     "prepub": "npm run prepublishOnly",
@@ -44,7 +46,7 @@
     "test:watch": "jest -u --watchAll --maxWorkers=25%",
     "test": "expo-module test",
     "ts": "tsc -p ./tsconfig.json",
-    "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run prepare",
+    "verify": "npm run ts && npm run lint && npm run test:dev && npm run prepub && npm run pack:check && npm run prepare",
     "version:next": "npm run release:patch"
   },
   "keywords": [
