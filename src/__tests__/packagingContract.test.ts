@@ -47,6 +47,20 @@ describe('public packaging contract', () => {
     expect(source).toContain('export type DeviceInfo = {');
     expect(source).toContain('identifier: string;');
     expect(source).toContain('deviceName: string;');
+    expect(source).toContain('isConnected: boolean;');
+    expect(source).toContain('isReady: boolean;');
     expect(source).toContain('batteryLevel: number;');
+  });
+
+  it('exposes a typed button press event payload', () => {
+    const typesPath = path.join(__dirname, '..', 'types', 'index.ts');
+    const source = fs.readFileSync(typesPath, 'utf8');
+
+    expect(source).toContain(
+      'onButtonPress: (params: ButtonPressEventPayload) => void;',
+    );
+    expect(source).toContain('export type ButtonPressEventPayload = {');
+    expect(source).toContain('identifier: string;');
+    expect(source).toContain('timestamp: number;');
   });
 });

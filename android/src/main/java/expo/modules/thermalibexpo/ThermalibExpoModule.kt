@@ -12,13 +12,16 @@ import uk.co.etiltd.thermalib.Device
 import uk.co.etiltd.thermalib.ThermaLib
 
 /**
- * Interface for propagating log messages to the parent class
+ * Interface for propagating native SDK events to the module.
  */
-interface ThermaLibLogListener {
+interface ThermaLibEventListener {
     fun onLogMessage(message: String)
+    fun onButtonPressed(device: Device, timestamp: Long)
 }
 
 val TAG =  "ThermalibExpo"
+private const val CHANGE_EVENT_NAME = "onChange"
+private const val BUTTON_PRESS_EVENT_NAME = "onButtonPress"
 
 lateinit var TL : ThermaLib
 
@@ -31,26 +34,44 @@ fun refreshDeviceList() {
   deviceList = TL.deviceList.toTypedArray()
 }
 
-class ThermalibExpoModule : Module(), ThermaLibLogListener {
+class ThermalibExpoModule : Module(), ThermaLibEventListener {
   private val context: Context
   get() = requireNotNull(appContext.reactContext)
 
+  private fun sendEventSafely(eventName: String, payload: Map<String, Any?>) {
+    try {
+      sendEvent(eventName, payload)
+    } catch (ex: Exception) {
+      ex.message?.let { Log.d(TAG, it) }
+    }
+  }
+
   fun sendMessage(msg: String) {
-      Log.d(TAG, msg)
-      try {
-          sendEvent("onChange",
-              mapOf(
-                  "value" to msg
-              ))
-  
-      } catch (ex: Exception) {
-          ex.message?.let { Log.d(TAG, it) }
-      }
+    Log.d(TAG, msg)
+    sendEventSafely(
+      CHANGE_EVENT_NAME,
+      mapOf(
+        "value" to msg
+      )
+    )
   }
 
   override fun onLogMessage(message: String) {
     // This method is triggered by ThermaLibCallbacks and logs the message
     sendMessage(message)
+  }
+
+  override fun onButtonPressed(device: Device, timestamp: Long) {
+    val identifier = device.identifier
+    sendMessage("Button pressed on device $identifier")
+    sendEventSafely(
+      BUTTON_PRESS_EVENT_NAME,
+      mapOf(
+        "identifier" to identifier,
+        "deviceName" to device.deviceName,
+        "timestamp" to timestamp.toDouble()
+      )
+    )
   }
 
   // Each module class must implement the definition function. The definition consists of components
@@ -63,7 +84,7 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
     Name(TAG)
 
     // Defines event names that the module can send to JavaScript.
-    Events("onChange")
+    Events(CHANGE_EVENT_NAME, BUTTON_PRESS_EVENT_NAME)
 
     // Defines a JavaScript function that always returns a Promise and whose native code
     // is by default dispatched on the different thread than the JavaScript runtime runs on.
@@ -193,6 +214,8 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
       map.putString("identifier", dev.identifier)
       map.putString("deviceName", dev.deviceName)
       map.putString("connectionState", dev.connectionState.toString())
+      map.putBoolean("isConnected", dev.isConnected)
+      map.putBoolean("isReady", dev.isReady)
       map.putString("modelNumber",dev.modelNumber)
       map.putString("manufacturerName",dev.manufacturerName)
       map.putInt("batteryLevel",dev.batteryLevel)
@@ -237,13 +260,13 @@ class ThermalibExpoModule : Module(), ThermaLibLogListener {
 /**
  * Illustrates: Handling of scan-time ThermaLib callbacks with parent class logging
  */
-class ThermaLibCallbacks(private val logListener: ThermaLibLogListener?) : ThermaLib.ClientCallbacksBase() {
+class ThermaLibCallbacks(private val eventListener: ThermaLibEventListener?) : ThermaLib.ClientCallbacksBase() {
   private fun log(message: String) {
       // Log to Logcat
       Log.d(TAG, message)
 
       // Forward the log message to the listener if provided
-      logListener?.onLogMessage(message)
+      eventListener?.onLogMessage(message)
   }
 
   override fun onScanComplete(
@@ -266,6 +289,20 @@ class ThermaLibCallbacks(private val logListener: ThermaLibLogListener?) : Therm
       }
   }
 
+  override fun onDeviceNotificationReceived(
+      device: Device,
+      notificationType: Int,
+      data: ByteArray?,
+      timestamp: Long
+  ) {
+      val notificationName = Device.NotificationType.toString(notificationType)
+      log("Device ${device.identifier} notification received: $notificationName")
+
+      if (notificationType == Device.NotificationType.BUTTON_PRESSED) {
+          eventListener?.onButtonPressed(device, timestamp)
+      }
+  }
+
   override fun onNewDevice(device: Device, timestamp: Long) {
     log(
           "New device found: ${device.deviceName}"
@@ -279,6 +316,10 @@ class ThermaLibCallbacks(private val logListener: ThermaLibLogListener?) : Therm
     log(
           "Device ${device.identifier} changed state -> ${device.connectionState}"
       )
+  }
+
+  override fun onDeviceReady(device: Device, timestamp: Long) {
+    log("Device ${device.identifier} is ready")
   }
 
   override fun onDeviceUpdated(device: Device, timestamp: Long) {

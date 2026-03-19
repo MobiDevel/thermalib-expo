@@ -20,6 +20,7 @@ This is an integration to the thermalib SDK from the company ETI, to read temper
     + [Read temperature](#read-temperature)
   * [Configure for Android](#configure-for-android)
   * [Configure for iOS](#configure-for-ios)
+  * [Development workflow](#development-workflow)
   * [Running the Expo module example](#running-the-expo-module-example)
     + [Build the library](#build-the-library)
     + [Run the example project](#run-the-example-project)
@@ -85,6 +86,7 @@ import thermalib, { DeviceInfo, requestBluetoothPermission } from "@mobione/ther
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, "onChange");
+  const buttonPressPayload = useEvent(thermalib, "onButtonPress");
 
   const startScanning = async () => {
     await requestBluetoothPermission();
@@ -97,6 +99,20 @@ export default function App() {
 ```
 
 [example/App.tsx](./example/App.tsx)
+
+### Listen for device button presses
+
+Subscribe to the `onButtonPress` native event to react when the user presses the physical button on a connected device.
+
+```typescript
+const buttonPressPayload = useEvent(thermalib, "onButtonPress");
+
+useEffect(() => {
+  if (buttonPressPayload?.identifier) {
+    console.log("Button pressed:", buttonPressPayload.identifier);
+  }
+}, [buttonPressPayload]);
+```
 
 ### Get available devices
 
@@ -182,23 +198,39 @@ This library depends on Bluetooth LE (low energy) and will add the required perm
 
 Run `npx pod-install` after installing the npm package.
 
+## Development workflow
+
+For normal local development:
+
+- Run `npm run build:watch` when you are changing files under `src/`.
+- Rebuild the example app when you change native files under `ios/`, `android/`, or config-plugin code under `plugin/`.
+- On iOS, rerun `cd example && npm run pods` after iOS native or pod-related changes, then run `cd example && npm run ios`.
+- When upgrading the Expo SDK or React Native version in the example app, delete `example/ios` and `example/android` first, then rerun `cd example && npm run prebuild` and `cd example && npm run pods`. Treat those native folders as generated output after framework version bumps.
+
+When to run the packaging scripts:
+
+- `npm run prepare`: run this when you need Expo to regenerate module scaffolding or sync generated project files. It is useful before release checks and after changing module config, plugin wiring, or other package metadata. You do not need it for every Swift, Kotlin, or TypeScript edit.
+- `npm run prepublishOnly` or `npm run prepub`: run this when you want to verify what will actually be published to npm. It prepares the package contents under `build/` and related publish artifacts. You usually do this before publishing or as part of `npm run verify`, not during normal example app development.
+
+In short:
+
+- Day-to-day app/module work: `build:watch`, `example` rebuilds, and `pods` when needed.
+- Release/package validation: `prepare`, `prepub`, and `verify`.
+
 ## Running the Expo module example
 
 ### Build the library
 
 ```bash
-npm run build # typescript
-# in a separate terminal
-npm run prepare
-npm run prepub
-npm run pods
+npm run build:watch
 ```
+
+Use `npm run prepare` and `npm run prepub` only when you are validating the package itself, not for every example build.
 
 ### Run the example project
 
 ```bash
 cd example
-npm run prebuild
 npm run pods
 npm run android # or ios
 
@@ -211,10 +243,9 @@ For convenience, we've added a command that runs all the required steps from the
 ### Publish a new version
 
 1. Commit and push your feature.
-2. Up [version](https://docs.npmjs.com/about-semantic-versioning) in [`package.json`](./package.json) using the script `npm version patch`. This will tag and push to your branch.
-3. PR and merge your branch.
-4. [Draft a new Release](https://github.com/MobiDevel/thermalib-expo/releases) from that the new tag.
-5. GitHub Action builds and publishes. The package becomes available in "packages" GitHub page.
+2. PR and merge your branch to `main` or `development`.
+3. Run the `Release` GitHub Action manually from the Actions tab and choose the semantic version bump (`patch`, `minor`, or `major`) plus the ClickUp task ID.
+4. The release workflow verifies the package, bumps the version, updates changelog artifacts, pushes the release commit and tag, creates the GitHub Release, and publishes to npm.
 
 ## Contributing
 
