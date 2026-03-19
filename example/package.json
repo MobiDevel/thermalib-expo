@@ -20,7 +20,7 @@
   "dependencies": {
     "@mobione/thermalib-expo": "../",
     "expo": "^55.0.6",
-    "expo-location": "~55.1.3",
+    "expo-location": "~55.1.4",
     "react": "19.2.0",
     "react-native": "0.83.2"
   },
