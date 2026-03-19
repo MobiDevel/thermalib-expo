@@ -10,6 +10,7 @@ import ExpoModulesCore
 
 // Reuse the SDK singleton lazily
 private let TL = ThermaLib.sharedInstance()!
+private let buttonPressedNotificationType = 1
 
 public class ThermalibExpoModule: Module {
   private var hasListeners = false
@@ -20,7 +21,7 @@ public class ThermalibExpoModule: Module {
     Name("ThermalibExpo")
 
     // Events JS can subscribe to (must match JS listener)
-    Events("onChange")
+    Events("onChange", "onButtonPress")
 
     OnStartObserving {
       self.hasListeners = true
@@ -80,7 +81,7 @@ public class ThermalibExpoModule: Module {
       }
 
       TL.connect(to: device)
-      self.emit("connectDevice: Successfully connected to device \(deviceId)")
+      self.emit("connectDevice: Connection requested for device \(deviceId)")
     }
 
     // Read temperature from first sensor (async on main thread)
@@ -98,15 +99,15 @@ public class ThermalibExpoModule: Module {
           return result
         }
 
-        // Check connection state if available
-        if let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int {
-          self.emit("readTemperature: Device \(deviceId) connection state = \(state)")
-          if state != 2 && state != 3 { // Treat state=3 as valid
-            self.emit("readTemperature: Device \(deviceId) not connected (state=\(state)) after refresh")
-            return result
-          }
-        } else {
-          self.emit("readTemperature: Unable to determine connection state for device \(deviceId)")
+        if !device.isConnected {
+          self.emit("readTemperature: Device \(deviceId) is not connected")
+          return result
+        }
+
+        if !device.isReady {
+          self.emit("readTemperature: Device \(deviceId) is connected but not ready yet, requesting refresh")
+          device.refresh()
+          return result
         }
 
         guard let sensors = device.sensors, sensors.count > 0 else {
@@ -136,7 +137,9 @@ public class ThermalibExpoModule: Module {
       deviceList = list
       for device in deviceList {
         let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
-        self.emit("refreshDeviceList: Device \(device.deviceIdentifier ?? "unknown") state = \(state)")
+        self.emit(
+          "refreshDeviceList: Device \(device.deviceIdentifier ?? "unknown") state = \(state), connected = \(device.isConnected), ready = \(device.isReady)"
+        )
       }
     }
   }
@@ -146,6 +149,8 @@ public class ThermalibExpoModule: Module {
     map["identifier"] = dev.deviceIdentifier ?? ""
     map["deviceName"] = dev.deviceName ?? ""
     map["connectionState"] = "\(dev.connectionState)"
+    map["isConnected"] = dev.isConnected
+    map["isReady"] = dev.isReady
     map["modelNumber"] = dev.modelNumber ?? ""
     map["manufacturerName"] = dev.manufacturerName ?? ""
     map["batteryLevel"] = dev.batteryLevel
@@ -157,6 +162,18 @@ public class ThermalibExpoModule: Module {
   private func emit(_ msg: String) {
     guard hasListeners else { return }
     sendEvent("onChange", ["value": msg])
+  }
+
+  private func emitButtonPress(identifier: String, deviceName: String, timestamp: Date) {
+    guard hasListeners else { return }
+    sendEvent(
+      "onButtonPress",
+      [
+        "identifier": identifier,
+        "deviceName": deviceName,
+        "timestamp": timestamp.timeIntervalSince1970 * 1000,
+      ]
+    )
   }
 
   private func initializeThermaLibIfNeeded() {
@@ -181,6 +198,18 @@ public class ThermalibExpoModule: Module {
       name: NSNotification.Name(rawValue: ThermaLibDeviceUpdatedNotificationName),
       object: nil
     )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.deviceNotificationReceived(_:)),
+      name: NSNotification.Name(rawValue: ThermaLibNotificationReceivedNotificationName),
+      object: nil
+    )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(self.sensorUpdated(_:)),
+      name: NSNotification.Name(rawValue: ThermaLibSensorUpdatedNotificationName),
+      object: nil
+    )
 
     isInitialized = true
     emit("Init ThermaLib")
@@ -203,15 +232,50 @@ public class ThermalibExpoModule: Module {
     if let device = notification.object as? TLDevice {
       let state = (device as? NSObject)?.value(forKey: "connectionState") as? Int ?? -1
       let identifier = device.deviceIdentifier ?? "unknown"
-      let msg = "Device \(identifier) updated with state \(state)"
+      let msg = "Device \(identifier) updated with state \(state), connected = \(device.isConnected), ready = \(device.isReady)"
       emit(msg)
-      if state == 2 { // Assuming 2 means connected
+      if device.isReady {
         emit("Device \(identifier) is ready")
+      } else if device.isConnected {
+        emit("Device \(identifier) connected, waiting until ready")
       } else {
         emit("Device \(identifier) not ready, state: \(state)")
       }
     } else {
       emit("deviceUpdated: Notification object is not a TLDevice")
     }
+  }
+
+  @objc private func deviceNotificationReceived(_ notification: Notification) {
+    guard let device = notification.object as? TLDevice else {
+      emit("deviceNotificationReceived: Notification object is not a TLDevice")
+      return
+    }
+
+    let identifier = device.deviceIdentifier ?? "unknown"
+    let rawType = (notification.userInfo?[ThermaLibNotificationReceivedNotificationTypeKey] as? NSNumber)?.intValue
+    emit("Device \(identifier) notification received: \(rawType ?? -1)")
+
+    guard rawType == buttonPressedNotificationType else {
+      return
+    }
+
+    let timestamp = (notification.userInfo?[ThermaLibNotificationTimestampKey] as? Date) ?? Date()
+    emit("Button pressed on device \(identifier)")
+    emitButtonPress(
+      identifier: identifier,
+      deviceName: device.deviceName ?? "",
+      timestamp: timestamp
+    )
+  }
+
+  @objc private func sensorUpdated(_ notification: Notification) {
+    guard let sensor = notification.object as? TLSensor else {
+      emit("sensorUpdated: Notification object is not a TLSensor")
+      return
+    }
+
+    let identifier = sensor.device.deviceIdentifier ?? "unknown"
+    emit("Sensor updated for device \(identifier): \(sensor.reading)")
   }
 }

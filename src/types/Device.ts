@@ -7,6 +7,8 @@ export type DeviceInfo = {
   identifier: string;
   deviceName: string;
   connectionState: string;
+  isConnected: boolean;
+  isReady: boolean;
   modelNumber: string | null;
   manufacturerName: string | null;
   batteryLevel: number;

@@ -11,7 +11,7 @@
     "expo:fix": "npx expo install --check && npx expo install --fix",
     "ios": "npm run prebuild && npm run pods && expo run:ios --device",
     "web": "expo start --web",
-    "pods": "npx pod-install",
+    "pods": "rm -rf ios/Pods ios/Podfile.lock && npx pod-install",
     "prebuild": "npm i && npx expo prebuild",
     "prebuild:debug": "EXPO_DEBUG=1 npx expo prebuild",
     "prebuild:clean": "npm i && npx expo prebuild --clean",

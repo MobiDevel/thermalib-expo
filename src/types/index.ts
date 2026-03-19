@@ -6,10 +6,17 @@ export type OnLoadEventPayload = {
 
 export type ThermalibExpoModuleEvents = {
   onChange: (params: ChangeEventPayload) => void;
+  onButtonPress: (params: ButtonPressEventPayload) => void;
 };
 
 export type ChangeEventPayload = {
   value: string;
+};
+
+export type ButtonPressEventPayload = {
+  identifier: string;
+  deviceName: string;
+  timestamp: number;
 };
 
 export type TemperatureReading = {

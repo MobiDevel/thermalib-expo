@@ -5,7 +5,7 @@ console.log(
   !!requireOptionalNativeModule('ThermalibExpo'),
 );
 import thermalib, {
-  Device,
+  DeviceInfo,
   requestBluetoothPermission,
 } from '@mobione/thermalib-expo';
 
@@ -24,11 +24,50 @@ import {useState, useEffect, useRef} from 'react';
 
 export default function App() {
   const onChangePayload = useEvent(thermalib, 'onChange');
-  const [devices, setDevices] = useState<Device[]>([]);
-  const [selectedDev, setSelectedDev] = useState<Device | undefined>(undefined);
+  const buttonPressPayload = useEvent(thermalib, 'onButtonPress');
+  const [devices, setDevices] = useState<DeviceInfo[]>([]);
+  const [selectedDev, setSelectedDev] = useState<DeviceInfo | undefined>(
+    undefined,
+  );
   const [reading, setReading] = useState<number | undefined>(undefined);
-  const [deviceReady, setDeviceReady] = useState(false);
   const lastDeviceIdRef = useRef<string | undefined>(undefined);
+
+  const syncDevices = (selectedDeviceId?: string) => {
+    const devs = thermalib?.devices();
+    if (!devs) {
+      return;
+    }
+
+    const nextDevices = devs.map((d) => d as DeviceInfo);
+    setDevices(nextDevices);
+
+    const currentSelectedId = selectedDeviceId ?? lastDeviceIdRef.current;
+    if (!currentSelectedId) {
+      return;
+    }
+
+    const nextSelected = nextDevices.find(
+      (device) => device.identifier === currentSelectedId,
+    );
+    if (!nextSelected) {
+      return;
+    }
+
+    setSelectedDev((currentSelected) => {
+      if (
+        currentSelected?.identifier === nextSelected.identifier &&
+        currentSelected.deviceName === nextSelected.deviceName &&
+        currentSelected.connectionState === nextSelected.connectionState &&
+        currentSelected.isConnected === nextSelected.isConnected &&
+        currentSelected.isReady === nextSelected.isReady &&
+        currentSelected.batteryLevel === nextSelected.batteryLevel
+      ) {
+        return currentSelected;
+      }
+
+      return nextSelected;
+    });
+  };
 
   const startScanning = async () => {
     await requestBluetoothPermission();
@@ -42,7 +81,16 @@ export default function App() {
     const devs = thermalib?.devices();
     console.log('Devices discovered:', devs);
     if (devs) {
-      setDevices(devs.map((d) => d as Device));
+      const nextDevices = devs.map((d) => d as DeviceInfo);
+      setDevices(nextDevices);
+      if (lastDeviceIdRef.current) {
+        const nextSelected = nextDevices.find(
+          (device) => device.identifier === lastDeviceIdRef.current,
+        );
+        if (nextSelected) {
+          setSelectedDev(nextSelected);
+        }
+      }
     } else {
       console.log('No devices');
     }
@@ -50,17 +98,17 @@ export default function App() {
 
   const selectDevice = async (deviceId: string) => {
     console.log('Selecting device:', deviceId);
-    const dev = thermalib.readDevice(deviceId) as {device?: Device};
-    if (dev?.device?.deviceName) {
-      setSelectedDev(dev.device);
-      setDeviceReady(false);
+    const dev = thermalib.readDevice(deviceId);
+    if (dev?.deviceName) {
+      setSelectedDev(dev);
       lastDeviceIdRef.current = deviceId;
 
       // Explicitly connect to the device
       try {
         console.log('Attempting to connect to device:', deviceId);
         await thermalib.connectDevice(deviceId);
-        console.log('Device connected:', deviceId);
+        syncDevices(deviceId);
+        console.log('Device connection requested:', deviceId);
       } catch (error) {
         console.error('Failed to connect to device:', error);
       }
@@ -93,25 +141,24 @@ export default function App() {
     (thermalib as any).initThermaLib?.();
   }, []);
 
-  // Listen for deviceUpdated event via onChangePayload
+  useEffect(() => {
+    if (buttonPressPayload?.identifier) {
+      console.log('Physical button pressed:', buttonPressPayload);
+      if (buttonPressPayload.identifier === lastDeviceIdRef.current) {
+        const timeoutId = setTimeout(() => {
+          void getTemperature(buttonPressPayload.identifier);
+        }, 250);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [buttonPressPayload]);
+
   useEffect(() => {
     if (onChangePayload?.value) {
       console.log('Device updated event payload:', onChangePayload.value);
-      if (
-        selectedDev?.identifier &&
-        onChangePayload.value.includes(selectedDev.identifier) &&
-        onChangePayload.value.includes('updated')
-      ) {
-        console.log('Device is ready:', selectedDev.identifier);
-        setDeviceReady(true);
-      } else {
-        console.log(
-          'Device not ready or event payload mismatch:',
-          onChangePayload.value,
-        );
-      }
     }
-  }, [onChangePayload, selectedDev]);
+  }, [onChangePayload]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -132,13 +179,20 @@ export default function App() {
           <Button title="startScanning" onPress={startScanning} />
           <Button title="devices" onPress={getDevices} />
           <Button
-            disabled={!deviceReady}
+            disabled={!selectedDev?.identifier}
             title="Get temperature"
             onPress={async () =>
               await getTemperature(selectedDev?.identifier || '')
             }
           />
-          {reading && (
+          {selectedDev ? (
+            <Text>
+              Selected: {selectedDev.deviceName} ({selectedDev.identifier}){'\n'}
+              Connected: {selectedDev.isConnected ? 'yes' : 'no'}{'\n'}
+              Ready: {selectedDev.isReady ? 'yes' : 'no'}
+            </Text>
+          ) : null}
+          {reading !== undefined && (
             <View style={styles.temperatureView}>
               <Text style={styles.temperatureText}>Reading: {reading}</Text>
             </View>
@@ -147,6 +201,12 @@ export default function App() {
 
         <Group name="Events">
           <Text>{onChangePayload?.value}</Text>
+          {buttonPressPayload?.identifier ? (
+            <Text>
+              Button pressed on {buttonPressPayload.deviceName || 'device'} (
+              {buttonPressPayload.identifier})
+            </Text>
+          ) : null}
         </Group>
       </ScrollView>
       <Group name="Devices">
