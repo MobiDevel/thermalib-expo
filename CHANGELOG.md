@@ -1,3 +1,8 @@
+## [0.4.0](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.4...v0.4.0) (2026-03-19)
+
+### Features
+
+* support thermapen button press CU-869ch59b7 ([7c1123f](https://github.com/MobiDevel/thermalib-expo/commit/7c1123f19aa274fde212088e2d40e2dbc0cfa6e9))
 ## [0.3.4](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.3...v0.3.4) (2026-03-18)
 
 ### Features
