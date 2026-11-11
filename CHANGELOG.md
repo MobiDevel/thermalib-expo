@@ -1,3 +1,8 @@
+## [0.4.1](https://github.com/MobiDevel/thermalib-expo/compare/v0.4.0...v0.4.1) (2026-11-11)
+
+### Bug Fixes
+
+* build the Android module with expo-module-gradle-plugin for Expo 57 CU-1amf0p5awdy ([44b95e0](https://github.com/MobiDevel/thermalib-expo/commit/44b95e08c825a6d8e5edef6156b560e9df39165e))
 ## [0.4.0](https://github.com/MobiDevel/thermalib-expo/compare/v0.3.4...v0.4.0) (2026-03-19)
 
 ### Features
